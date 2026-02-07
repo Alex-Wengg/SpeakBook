@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+*.xcuserstate
+
+# Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+build/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+
+# Large model files (download separately from HuggingFace)
+pocket-tts/
+chinesebooks/

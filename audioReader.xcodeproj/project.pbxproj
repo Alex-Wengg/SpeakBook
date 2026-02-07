@@ -1,0 +1,419 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0FC1683388AAC4CF96DDAEE7 /* EPubReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F60FFFD04D57F20E20EB54 /* EPubReaderView.swift */; };
+		3E1A3EC23294C5F2A331E109 /* FluidAudioTTS in Frameworks */ = {isa = PBXBuildFile; productRef = A85256EF6BF8BD4486C0721D /* FluidAudioTTS */; };
+		52073AAA0A80A2E2CA40CE18 /* EPubParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9A28BBD574CF4D801AF5E8 /* EPubParser.swift */; };
+		642F69869B37355A73B05745 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27783E2E71F8F4DFF6AF156 /* LibraryView.swift */; };
+		99BA59CB268F01244C08A51E /* install.sh in Resources */ = {isa = PBXBuildFile; fileRef = 10133613A949F3BA4ED4F3C0 /* install.sh */; };
+		B028E6D437E84E1068D440BF /* audioReaderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C091E8DE6F9C748B6F66840C /* audioReaderApp.swift */; };
+		B48C058C623BDE7555ED4ABE /* PDFMetadataExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E140DAD4ECBB8ECB13B191A /* PDFMetadataExtractor.swift */; };
+		D2F7F3246863D23D546EA1D2 /* TTSControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C532463F14DF9C7F7DF3BEB /* TTSControlBar.swift */; };
+		DEAF78C258EB7900F6ACA595 /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68ADCCB1CA07407332BD /* ReaderView.swift */; };
+		E5B9A94E84DEE1D1B993EAEB /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01AE0C8FADF81FEC76A4244C /* Book.swift */; };
+		ED19CFD8CA3FF5E42650114A /* PDFReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A6B8D5A9E7C9AA42A6C2F6 /* PDFReaderView.swift */; };
+		FB821D638001E1A876C2C461 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750C1E58E44CDA1D14195D05 /* TTSService.swift */; };
+		FFF65A2F767C2DE1BCDE0A16 /* FileTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A129DCFDE46ECAFE88EA6F32 /* FileTypes.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		01AE0C8FADF81FEC76A4244C /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
+		10133613A949F3BA4ED4F3C0 /* install.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
+		4B6B68ADCCB1CA07407332BD /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
+		4C532463F14DF9C7F7DF3BEB /* TTSControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSControlBar.swift; sourceTree = "<group>"; };
+		6E140DAD4ECBB8ECB13B191A /* PDFMetadataExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFMetadataExtractor.swift; sourceTree = "<group>"; };
+		750C1E58E44CDA1D14195D05 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
+		A10BD91F3BF18CC21966347F /* FluidAudio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FluidAudio; path = ../FluidAudio; sourceTree = SOURCE_ROOT; };
+		A129DCFDE46ECAFE88EA6F32 /* FileTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypes.swift; sourceTree = "<group>"; };
+		B27783E2E71F8F4DFF6AF156 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		C091E8DE6F9C748B6F66840C /* audioReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = audioReaderApp.swift; sourceTree = "<group>"; };
+		C0F60FFFD04D57F20E20EB54 /* EPubReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubReaderView.swift; sourceTree = "<group>"; };
+		E3D0A78568A731E8CE899433 /* audioReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = audioReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0A6B8D5A9E7C9AA42A6C2F6 /* PDFReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReaderView.swift; sourceTree = "<group>"; };
+		FD9A28BBD574CF4D801AF5E8 /* EPubParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubParser.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BD5BE116FB87E47F7CE73F45 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E1A3EC23294C5F2A331E109 /* FluidAudioTTS in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		00B0B588FA5A3969E2F980FB /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				A10BD91F3BF18CC21966347F /* FluidAudio */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		03EA235D14833AEB5BE4ED85 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A129DCFDE46ECAFE88EA6F32 /* FileTypes.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		29F0D4770C8CF2CCC0929233 = {
+			isa = PBXGroup;
+			children = (
+				40336BABD12641BEAB38342D /* audioReader */,
+				74718E2B1AC1D44035B574CE /* Models */,
+				00B0B588FA5A3969E2F980FB /* Packages */,
+				88F3F0D230CB7AA1962ADC25 /* Services */,
+				03EA235D14833AEB5BE4ED85 /* Utilities */,
+				8A9EC45EDA3802C19BEA551B /* Views */,
+				2DCDF65DAFBF763EE2082F57 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2DCDF65DAFBF763EE2082F57 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D0A78568A731E8CE899433 /* audioReader.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		40336BABD12641BEAB38342D /* audioReader */ = {
+			isa = PBXGroup;
+			children = (
+				C091E8DE6F9C748B6F66840C /* audioReaderApp.swift */,
+				10133613A949F3BA4ED4F3C0 /* install.sh */,
+			);
+			name = audioReader;
+			path = .;
+			sourceTree = "<group>";
+		};
+		74718E2B1AC1D44035B574CE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				01AE0C8FADF81FEC76A4244C /* Book.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		88F3F0D230CB7AA1962ADC25 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				FD9A28BBD574CF4D801AF5E8 /* EPubParser.swift */,
+				6E140DAD4ECBB8ECB13B191A /* PDFMetadataExtractor.swift */,
+				750C1E58E44CDA1D14195D05 /* TTSService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		8A9EC45EDA3802C19BEA551B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C0F60FFFD04D57F20E20EB54 /* EPubReaderView.swift */,
+				B27783E2E71F8F4DFF6AF156 /* LibraryView.swift */,
+				F0A6B8D5A9E7C9AA42A6C2F6 /* PDFReaderView.swift */,
+				4B6B68ADCCB1CA07407332BD /* ReaderView.swift */,
+				4C532463F14DF9C7F7DF3BEB /* TTSControlBar.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		781A084D3DE0DE1E242AE39D /* audioReader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE55CED7F680F1C670E30969 /* Build configuration list for PBXNativeTarget "audioReader" */;
+			buildPhases = (
+				DE0D55B49FADD5034A08A012 /* Sources */,
+				42D686B7BB5EA294E232C0A5 /* Resources */,
+				BD5BE116FB87E47F7CE73F45 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = audioReader;
+			packageProductDependencies = (
+				A85256EF6BF8BD4486C0721D /* FluidAudioTTS */,
+			);
+			productName = audioReader;
+			productReference = E3D0A78568A731E8CE899433 /* audioReader.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		503C4A59F8D28315AC05E0F2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					781A084D3DE0DE1E242AE39D = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 0CD0426012D9175E56C3721A /* Build configuration list for PBXProject "audioReader" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 29F0D4770C8CF2CCC0929233;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2AC5BFEAF8875B960D6F31A4 /* XCLocalSwiftPackageReference "../FluidAudio" */,
+			);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				781A084D3DE0DE1E242AE39D /* audioReader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		42D686B7BB5EA294E232C0A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99BA59CB268F01244C08A51E /* install.sh in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DE0D55B49FADD5034A08A012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5B9A94E84DEE1D1B993EAEB /* Book.swift in Sources */,
+				52073AAA0A80A2E2CA40CE18 /* EPubParser.swift in Sources */,
+				0FC1683388AAC4CF96DDAEE7 /* EPubReaderView.swift in Sources */,
+				FFF65A2F767C2DE1BCDE0A16 /* FileTypes.swift in Sources */,
+				642F69869B37355A73B05745 /* LibraryView.swift in Sources */,
+				B48C058C623BDE7555ED4ABE /* PDFMetadataExtractor.swift in Sources */,
+				ED19CFD8CA3FF5E42650114A /* PDFReaderView.swift in Sources */,
+				DEAF78C258EB7900F6ACA595 /* ReaderView.swift in Sources */,
+				D2F7F3246863D23D546EA1D2 /* TTSControlBar.swift in Sources */,
+				FB821D638001E1A876C2C461 /* TTSService.swift in Sources */,
+				B028E6D437E84E1068D440BF /* audioReaderApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2DFB4C9FAF691DCC75FEE543 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = LQASNXF5ZN;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.voicelink.audioReader;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		31944820B156331587E8DBB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = VMX95L6446;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7EFBD5BEAB9A200C694C8360 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = VMX95L6446;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		FA1DB885F20F2A1687F617E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = LQASNXF5ZN;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.voicelink.audioReader;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0CD0426012D9175E56C3721A /* Build configuration list for PBXProject "audioReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31944820B156331587E8DBB4 /* Debug */,
+				7EFBD5BEAB9A200C694C8360 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BE55CED7F680F1C670E30969 /* Build configuration list for PBXNativeTarget "audioReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FA1DB885F20F2A1687F617E1 /* Debug */,
+				2DFB4C9FAF691DCC75FEE543 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2AC5BFEAF8875B960D6F31A4 /* XCLocalSwiftPackageReference "../FluidAudio" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../FluidAudio;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A85256EF6BF8BD4486C0721D /* FluidAudioTTS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FluidAudioTTS;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 503C4A59F8D28315AC05E0F2 /* Project object */;
+}

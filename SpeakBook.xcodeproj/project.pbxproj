@@ -1,0 +1,425 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1B5AC6FF6639C3ED6AC28D78 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D026E56A5D7E2D0982F86AE /* Book.swift */; };
+		2C4F3E2F19BB2FF98709E888 /* test_tts_accuracy.txt in Resources */ = {isa = PBXBuildFile; fileRef = 195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */; };
+		322ED1B9C56B7B3D4FB078BC /* audioReaderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46B1EC98D3BFB1365312BB3 /* audioReaderApp.swift */; };
+		4BFD2D8BEEC6AEB192399CCA /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BF111E53BCF31AF0DB517E /* LibraryView.swift */; };
+		4E72B575B424622103341B3E /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A9D4323D987E94DDD754E8 /* ReaderView.swift */; };
+		63D82EA79B3DF276E96017B6 /* FluidAudioTTS in Frameworks */ = {isa = PBXBuildFile; productRef = 8A3ADBD1CFEDC3FC2C240027 /* FluidAudioTTS */; };
+		64E6A28C9A3F5919ED6DB750 /* EPubReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5223486E3A99C420AB69D128 /* EPubReaderView.swift */; };
+		67E277449CA6F0419DDF8852 /* FileTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E5BBD0C03EF2A21F41A569 /* FileTypes.swift */; };
+		6CC1D9A85049E1CA19E42126 /* PDFReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD17B1D20F18E685139D353 /* PDFReaderView.swift */; };
+		7BD81B99DB790DA7FAABE28A /* install.sh in Resources */ = {isa = PBXBuildFile; fileRef = D0431A4D1427F0853FBAB792 /* install.sh */; };
+		869146C3D7C39C6F00305222 /* TTSControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DDDEEE3EEADEF1982AF751 /* TTSControlBar.swift */; };
+		C2805B4FF9A7125C49A71583 /* PDFMetadataExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488B14A8211D5D3015A891D6 /* PDFMetadataExtractor.swift */; };
+		E5C0200BCF22860D9E5C6342 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3635215D31ED3024EC0DFF /* TTSService.swift */; };
+		F4DCD11F7B8E4503D82F578C /* EPubParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D178A6E8F964832086F392 /* EPubParser.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = test_tts_accuracy.txt; sourceTree = "<group>"; };
+		3E3635215D31ED3024EC0DFF /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
+		427CAD6663461779CA16FC48 /* SpeakBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeakBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		488B14A8211D5D3015A891D6 /* PDFMetadataExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFMetadataExtractor.swift; sourceTree = "<group>"; };
+		51D178A6E8F964832086F392 /* EPubParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubParser.swift; sourceTree = "<group>"; };
+		5223486E3A99C420AB69D128 /* EPubReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubReaderView.swift; sourceTree = "<group>"; };
+		53BF111E53BCF31AF0DB517E /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		5D026E56A5D7E2D0982F86AE /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
+		69A9D4323D987E94DDD754E8 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
+		868E2097477CFBFB34717EE6 /* FluidAudio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FluidAudio; path = ../FluidAudio; sourceTree = SOURCE_ROOT; };
+		C46B1EC98D3BFB1365312BB3 /* audioReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = audioReaderApp.swift; sourceTree = "<group>"; };
+		C6E5BBD0C03EF2A21F41A569 /* FileTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypes.swift; sourceTree = "<group>"; };
+		CBD17B1D20F18E685139D353 /* PDFReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReaderView.swift; sourceTree = "<group>"; };
+		D0431A4D1427F0853FBAB792 /* install.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
+		D5DDDEEE3EEADEF1982AF751 /* TTSControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSControlBar.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		551D84F2EEB800B61B853A03 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63D82EA79B3DF276E96017B6 /* FluidAudioTTS in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		45220B900744FFC91837BE71 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5D026E56A5D7E2D0982F86AE /* Book.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4DE0F42184FA3D190E0C1E0C /* SpeakBook */ = {
+			isa = PBXGroup;
+			children = (
+				C46B1EC98D3BFB1365312BB3 /* audioReaderApp.swift */,
+				D0431A4D1427F0853FBAB792 /* install.sh */,
+				195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */,
+			);
+			name = SpeakBook;
+			path = .;
+			sourceTree = "<group>";
+		};
+		60966B783465222CE5C6F744 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5223486E3A99C420AB69D128 /* EPubReaderView.swift */,
+				53BF111E53BCF31AF0DB517E /* LibraryView.swift */,
+				CBD17B1D20F18E685139D353 /* PDFReaderView.swift */,
+				69A9D4323D987E94DDD754E8 /* ReaderView.swift */,
+				D5DDDEEE3EEADEF1982AF751 /* TTSControlBar.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6B9C4F7EB347FBB04F41662E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				51D178A6E8F964832086F392 /* EPubParser.swift */,
+				488B14A8211D5D3015A891D6 /* PDFMetadataExtractor.swift */,
+				3E3635215D31ED3024EC0DFF /* TTSService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		94E17895AE2DFB09668F6899 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				C6E5BBD0C03EF2A21F41A569 /* FileTypes.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		D9ADF156351877E45AC622CB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				427CAD6663461779CA16FC48 /* SpeakBook.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EB4BD70A8D3186ED9E912021 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				868E2097477CFBFB34717EE6 /* FluidAudio */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		FC8F39C48297BECBE9CFE808 = {
+			isa = PBXGroup;
+			children = (
+				45220B900744FFC91837BE71 /* Models */,
+				EB4BD70A8D3186ED9E912021 /* Packages */,
+				6B9C4F7EB347FBB04F41662E /* Services */,
+				4DE0F42184FA3D190E0C1E0C /* SpeakBook */,
+				94E17895AE2DFB09668F6899 /* Utilities */,
+				60966B783465222CE5C6F744 /* Views */,
+				D9ADF156351877E45AC622CB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CD220F5701AE2B3BD662C319 /* SpeakBook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC1FD6F5E2AC3E660981886A /* Build configuration list for PBXNativeTarget "SpeakBook" */;
+			buildPhases = (
+				AC415D254D3D13C9361B12D9 /* Sources */,
+				CD79F08E30DB975DE7FE138F /* Resources */,
+				551D84F2EEB800B61B853A03 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpeakBook;
+			packageProductDependencies = (
+				8A3ADBD1CFEDC3FC2C240027 /* FluidAudioTTS */,
+			);
+			productName = SpeakBook;
+			productReference = 427CAD6663461779CA16FC48 /* SpeakBook.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		002B7E3D2A101FD1BA69C4F7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					CD220F5701AE2B3BD662C319 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9283483D740B0517A8B6FCD9 /* Build configuration list for PBXProject "SpeakBook" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = FC8F39C48297BECBE9CFE808;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C06A0EF2ED1878C873FC30F7 /* XCLocalSwiftPackageReference "../FluidAudio" */,
+			);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CD220F5701AE2B3BD662C319 /* SpeakBook */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CD79F08E30DB975DE7FE138F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BD81B99DB790DA7FAABE28A /* install.sh in Resources */,
+				2C4F3E2F19BB2FF98709E888 /* test_tts_accuracy.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AC415D254D3D13C9361B12D9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B5AC6FF6639C3ED6AC28D78 /* Book.swift in Sources */,
+				F4DCD11F7B8E4503D82F578C /* EPubParser.swift in Sources */,
+				64E6A28C9A3F5919ED6DB750 /* EPubReaderView.swift in Sources */,
+				67E277449CA6F0419DDF8852 /* FileTypes.swift in Sources */,
+				4BFD2D8BEEC6AEB192399CCA /* LibraryView.swift in Sources */,
+				C2805B4FF9A7125C49A71583 /* PDFMetadataExtractor.swift in Sources */,
+				6CC1D9A85049E1CA19E42126 /* PDFReaderView.swift in Sources */,
+				4E72B575B424622103341B3E /* ReaderView.swift in Sources */,
+				869146C3D7C39C6F00305222 /* TTSControlBar.swift in Sources */,
+				E5C0200BCF22860D9E5C6342 /* TTSService.swift in Sources */,
+				322ED1B9C56B7B3D4FB078BC /* audioReaderApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		06D3E253E39AEDECBA8071A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = VMX95L6446;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		19F8DDD5C6EEC8CA99EB0450 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = VMX95L6446;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		34D104731F22DDFD327A721B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = LQASNXF5ZN;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_UIBackgroundModes = audio;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.speakbook.SpeakBook;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EEB62A81132E0ED79A75B01A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = LQASNXF5ZN;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_UIBackgroundModes = audio;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.speakbook.SpeakBook;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9283483D740B0517A8B6FCD9 /* Build configuration list for PBXProject "SpeakBook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				06D3E253E39AEDECBA8071A8 /* Debug */,
+				19F8DDD5C6EEC8CA99EB0450 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FC1FD6F5E2AC3E660981886A /* Build configuration list for PBXNativeTarget "SpeakBook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				34D104731F22DDFD327A721B /* Debug */,
+				EEB62A81132E0ED79A75B01A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		C06A0EF2ED1878C873FC30F7 /* XCLocalSwiftPackageReference "../FluidAudio" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../FluidAudio;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8A3ADBD1CFEDC3FC2C240027 /* FluidAudioTTS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FluidAudioTTS;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 002B7E3D2A101FD1BA69C4F7 /* Project object */;
+}

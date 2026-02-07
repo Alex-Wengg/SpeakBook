@@ -1,0 +1,35 @@
+name: SpeakBook
+options:
+  bundleIdPrefix: com.speakbook
+  deploymentTarget:
+    iOS: "17.0"
+settings:
+  INFOPLIST_FILE: Info.plist
+  CODE_SIGN_STYLE: Automatic
+  DEVELOPMENT_TEAM: VMX95L6446
+targets:
+  SpeakBook:
+    type: application
+    platform: iOS
+    settings:
+      INFOPLIST_KEY_UIBackgroundModes: audio
+    sources:
+      - path: .
+        excludes:
+          - "*.md"
+          - "*.yml"
+          - "*.pdf"
+          - "*.json"
+          - Info.plist
+          - Resources
+          - build
+          - "*.xcodeproj"
+          - chinesebooks
+          - fluidaudio_cli
+          - pocket-tts
+    dependencies:
+      - package: FluidAudio
+        product: FluidAudioTTS
+packages:
+  FluidAudio:
+    path: ../FluidAudio
