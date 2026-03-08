@@ -3,42 +3,95 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1B5AC6FF6639C3ED6AC28D78 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D026E56A5D7E2D0982F86AE /* Book.swift */; };
+		2706FE0D64A606BD43F65608 /* pre-applypatch.sample in Resources */ = {isa = PBXBuildFile; fileRef = 6F58A93100326D0295550D2E /* pre-applypatch.sample */; };
+		29473232EAE1FABA46EF7251 /* pre-merge-commit.sample in Resources */ = {isa = PBXBuildFile; fileRef = E615CF3D3B583D340151A42B /* pre-merge-commit.sample */; };
 		2C4F3E2F19BB2FF98709E888 /* test_tts_accuracy.txt in Resources */ = {isa = PBXBuildFile; fileRef = 195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */; };
 		322ED1B9C56B7B3D4FB078BC /* audioReaderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46B1EC98D3BFB1365312BB3 /* audioReaderApp.swift */; };
+		34570AD99A8EC86430913610 /* fsmonitor-watchman.sample in Resources */ = {isa = PBXBuildFile; fileRef = 3A99DFFDA89C30216106428B /* fsmonitor-watchman.sample */; };
+		4906259EB048D59EEEF9F6E7 /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.rev in Resources */ = {isa = PBXBuildFile; fileRef = 1C75F4409BF1362AD14E2516 /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.rev */; };
 		4BFD2D8BEEC6AEB192399CCA /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BF111E53BCF31AF0DB517E /* LibraryView.swift */; };
 		4E72B575B424622103341B3E /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A9D4323D987E94DDD754E8 /* ReaderView.swift */; };
-		63D82EA79B3DF276E96017B6 /* FluidAudioTTS in Frameworks */ = {isa = PBXBuildFile; productRef = 8A3ADBD1CFEDC3FC2C240027 /* FluidAudioTTS */; };
+		5BD9E37A7537FBDF139922B2 /* applypatch-msg.sample in Resources */ = {isa = PBXBuildFile; fileRef = 262C2799C76312E249D4FBA9 /* applypatch-msg.sample */; };
+		63D82EA79B3DF276E96017B6 /* FluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 635597B7354DF9C0E5FC966B /* FluidAudio */; };
 		64E6A28C9A3F5919ED6DB750 /* EPubReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5223486E3A99C420AB69D128 /* EPubReaderView.swift */; };
 		67E277449CA6F0419DDF8852 /* FileTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E5BBD0C03EF2A21F41A569 /* FileTypes.swift */; };
+		68A20056AD39048A3BC287B2 /* post-update.sample in Resources */ = {isa = PBXBuildFile; fileRef = 880A98506C4C4321FD822EDC /* post-update.sample */; };
 		6CC1D9A85049E1CA19E42126 /* PDFReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD17B1D20F18E685139D353 /* PDFReaderView.swift */; };
+		756052856EB8210D70193752 /* PlatformTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6C8CCD4A40561C27169BE0 /* PlatformTypes.swift */; };
+		7651DEC31FCB4ECA58589A82 /* commit-msg.sample in Resources */ = {isa = PBXBuildFile; fileRef = B688103A2F2ACA27D4E098B2 /* commit-msg.sample */; };
 		7BD81B99DB790DA7FAABE28A /* install.sh in Resources */ = {isa = PBXBuildFile; fileRef = D0431A4D1427F0853FBAB792 /* install.sh */; };
+		83359A6254979F59AA7859AD /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx in Resources */ = {isa = PBXBuildFile; fileRef = 03E574C83471F3C0CE60C55A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx */; };
 		869146C3D7C39C6F00305222 /* TTSControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DDDEEE3EEADEF1982AF751 /* TTSControlBar.swift */; };
+		AA11E42633820E966A95F927 /* download_models.sh in Resources */ = {isa = PBXBuildFile; fileRef = AB8DD17A82BEF1338324EEBC /* download_models.sh */; };
+		B065FF2EC3CB0AD3DD49C73D /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.pack in Resources */ = {isa = PBXBuildFile; fileRef = 5D438BF2BB8652A52830F32A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.pack */; };
+		B91EDBD1BBCA7E19A1465D5B /* push-to-checkout.sample in Resources */ = {isa = PBXBuildFile; fileRef = D3F8F3EEE1AFCD3E7CDC8CA0 /* push-to-checkout.sample */; };
+		BCF462C7B424F9D3AF87EDB6 /* pre-receive.sample in Resources */ = {isa = PBXBuildFile; fileRef = E48A72E95F489795F40FDABA /* pre-receive.sample */; };
 		C2805B4FF9A7125C49A71583 /* PDFMetadataExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488B14A8211D5D3015A891D6 /* PDFMetadataExtractor.swift */; };
+		C7578003128253B20A097BA8 /* pre-push.sample in Resources */ = {isa = PBXBuildFile; fileRef = BB09B2FED360D851E639DEB3 /* pre-push.sample */; };
+		D36543F5F7DE53875D0F67DE /* sendemail-validate.sample in Resources */ = {isa = PBXBuildFile; fileRef = 568AE9D5C84D076A836EDE9C /* sendemail-validate.sample */; };
+		DF130524F6F1F33F848020A6 /* update.sample in Resources */ = {isa = PBXBuildFile; fileRef = A48117861C53FC336F70B8F0 /* update.sample */; };
 		E5C0200BCF22860D9E5C6342 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3635215D31ED3024EC0DFF /* TTSService.swift */; };
+		EEC345BF13BA90CF54827B0A /* pre-rebase.sample in Resources */ = {isa = PBXBuildFile; fileRef = 973761B631042C1CA928B412 /* pre-rebase.sample */; };
 		F4DCD11F7B8E4503D82F578C /* EPubParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D178A6E8F964832086F392 /* EPubParser.swift */; };
+		FC13E744753ECA19AFC236B3 /* prepare-commit-msg.sample in Resources */ = {isa = PBXBuildFile; fileRef = D8C19F48007C62BE32F0BCF6 /* prepare-commit-msg.sample */; };
+		FC5042945E462DFFC2B79B8B /* pre-commit.sample in Resources */ = {isa = PBXBuildFile; fileRef = FAB0B46F8AFD73E535A0C99D /* pre-commit.sample */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		03E574C83471F3C0CE60C55A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx */ = {isa = PBXFileReference; path = "pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx"; sourceTree = "<group>"; };
 		195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = test_tts_accuracy.txt; sourceTree = "<group>"; };
+		1C75F4409BF1362AD14E2516 /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.rev */ = {isa = PBXFileReference; path = "pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.rev"; sourceTree = "<group>"; };
+		1F8B0AF1983197D55337CE8C /* .gitignore */ = {isa = PBXFileReference; path = .gitignore; sourceTree = "<group>"; };
+		2506F95D34BB13A27498D2C5 /* commit-graph */ = {isa = PBXFileReference; path = "commit-graph"; sourceTree = "<group>"; };
+		262C2799C76312E249D4FBA9 /* applypatch-msg.sample */ = {isa = PBXFileReference; path = "applypatch-msg.sample"; sourceTree = "<group>"; };
+		3A4AE2BF40D7ED2C02DC19C1 /* exclude */ = {isa = PBXFileReference; path = exclude; sourceTree = "<group>"; };
+		3A99DFFDA89C30216106428B /* fsmonitor-watchman.sample */ = {isa = PBXFileReference; path = "fsmonitor-watchman.sample"; sourceTree = "<group>"; };
 		3E3635215D31ED3024EC0DFF /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
-		427CAD6663461779CA16FC48 /* SpeakBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeakBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		427CAD6663461779CA16FC48 /* SpeakBook.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SpeakBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		488B14A8211D5D3015A891D6 /* PDFMetadataExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFMetadataExtractor.swift; sourceTree = "<group>"; };
 		51D178A6E8F964832086F392 /* EPubParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubParser.swift; sourceTree = "<group>"; };
 		5223486E3A99C420AB69D128 /* EPubReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubReaderView.swift; sourceTree = "<group>"; };
 		53BF111E53BCF31AF0DB517E /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		568AE9D5C84D076A836EDE9C /* sendemail-validate.sample */ = {isa = PBXFileReference; path = "sendemail-validate.sample"; sourceTree = "<group>"; };
 		5D026E56A5D7E2D0982F86AE /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
+		5D438BF2BB8652A52830F32A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.pack */ = {isa = PBXFileReference; path = "pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.pack"; sourceTree = "<group>"; };
+		63F4A17A27E6585A8C95AE94 /* index */ = {isa = PBXFileReference; path = index; sourceTree = "<group>"; };
 		69A9D4323D987E94DDD754E8 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
+		6A2D6A59630C72930ABA5F34 /* packed-refs */ = {isa = PBXFileReference; path = "packed-refs"; sourceTree = "<group>"; };
+		6F58A93100326D0295550D2E /* pre-applypatch.sample */ = {isa = PBXFileReference; path = "pre-applypatch.sample"; sourceTree = "<group>"; };
+		74D49178922B1166E048ADDD /* HEAD */ = {isa = PBXFileReference; path = HEAD; sourceTree = "<group>"; };
+		75A096DA473C799C625D0345 /* main */ = {isa = PBXFileReference; path = main; sourceTree = "<group>"; };
 		868E2097477CFBFB34717EE6 /* FluidAudio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FluidAudio; path = ../FluidAudio; sourceTree = SOURCE_ROOT; };
+		880A98506C4C4321FD822EDC /* post-update.sample */ = {isa = PBXFileReference; path = "post-update.sample"; sourceTree = "<group>"; };
+		973761B631042C1CA928B412 /* pre-rebase.sample */ = {isa = PBXFileReference; path = "pre-rebase.sample"; sourceTree = "<group>"; };
+		A48117861C53FC336F70B8F0 /* update.sample */ = {isa = PBXFileReference; path = update.sample; sourceTree = "<group>"; };
+		A62AC737E2F1D84B460C6924 /* description */ = {isa = PBXFileReference; path = description; sourceTree = "<group>"; };
+		AB6C8CCD4A40561C27169BE0 /* PlatformTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformTypes.swift; sourceTree = "<group>"; };
+		AB8DD17A82BEF1338324EEBC /* download_models.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = download_models.sh; sourceTree = "<group>"; };
+		B688103A2F2ACA27D4E098B2 /* commit-msg.sample */ = {isa = PBXFileReference; path = "commit-msg.sample"; sourceTree = "<group>"; };
+		BB09B2FED360D851E639DEB3 /* pre-push.sample */ = {isa = PBXFileReference; path = "pre-push.sample"; sourceTree = "<group>"; };
+		C38BCAC7A191BEB5028C1983 /* COMMIT_EDITMSG */ = {isa = PBXFileReference; path = COMMIT_EDITMSG; sourceTree = "<group>"; };
 		C46B1EC98D3BFB1365312BB3 /* audioReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = audioReaderApp.swift; sourceTree = "<group>"; };
 		C6E5BBD0C03EF2A21F41A569 /* FileTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypes.swift; sourceTree = "<group>"; };
 		CBD17B1D20F18E685139D353 /* PDFReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReaderView.swift; sourceTree = "<group>"; };
+		CBEF7EBA8A8A36DF79B2F233 /* packs */ = {isa = PBXFileReference; path = packs; sourceTree = "<group>"; };
 		D0431A4D1427F0853FBAB792 /* install.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
+		D3F8F3EEE1AFCD3E7CDC8CA0 /* push-to-checkout.sample */ = {isa = PBXFileReference; path = "push-to-checkout.sample"; sourceTree = "<group>"; };
+		D49E9ACF34A98D563A303165 /* main */ = {isa = PBXFileReference; path = main; sourceTree = "<group>"; };
 		D5DDDEEE3EEADEF1982AF751 /* TTSControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSControlBar.swift; sourceTree = "<group>"; };
+		D8C19F48007C62BE32F0BCF6 /* prepare-commit-msg.sample */ = {isa = PBXFileReference; path = "prepare-commit-msg.sample"; sourceTree = "<group>"; };
+		DA0CEAF8D8E49ACBE5BB67A3 /* HEAD */ = {isa = PBXFileReference; path = HEAD; sourceTree = "<group>"; };
+		E47468036B9A506B7C2399D4 /* refs */ = {isa = PBXFileReference; path = refs; sourceTree = "<group>"; };
+		E48A72E95F489795F40FDABA /* pre-receive.sample */ = {isa = PBXFileReference; path = "pre-receive.sample"; sourceTree = "<group>"; };
+		E615CF3D3B583D340151A42B /* pre-merge-commit.sample */ = {isa = PBXFileReference; path = "pre-merge-commit.sample"; sourceTree = "<group>"; };
+		F05A320460C598FDB7A6F18E /* main */ = {isa = PBXFileReference; path = main; sourceTree = "<group>"; };
+		F906AFC01BE29CB678497592 /* config */ = {isa = PBXFileReference; path = config; sourceTree = "<group>"; };
+		FAB0B46F8AFD73E535A0C99D /* pre-commit.sample */ = {isa = PBXFileReference; path = "pre-commit.sample"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,13 +99,60 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63D82EA79B3DF276E96017B6 /* FluidAudioTTS in Frameworks */,
+				63D82EA79B3DF276E96017B6 /* FluidAudio in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		19AF5A88A8ECFF09B97FDC41 /* hooks */ = {
+			isa = PBXGroup;
+			children = (
+				262C2799C76312E249D4FBA9 /* applypatch-msg.sample */,
+				B688103A2F2ACA27D4E098B2 /* commit-msg.sample */,
+				3A99DFFDA89C30216106428B /* fsmonitor-watchman.sample */,
+				880A98506C4C4321FD822EDC /* post-update.sample */,
+				6F58A93100326D0295550D2E /* pre-applypatch.sample */,
+				FAB0B46F8AFD73E535A0C99D /* pre-commit.sample */,
+				E615CF3D3B583D340151A42B /* pre-merge-commit.sample */,
+				BB09B2FED360D851E639DEB3 /* pre-push.sample */,
+				973761B631042C1CA928B412 /* pre-rebase.sample */,
+				E48A72E95F489795F40FDABA /* pre-receive.sample */,
+				D8C19F48007C62BE32F0BCF6 /* prepare-commit-msg.sample */,
+				D3F8F3EEE1AFCD3E7CDC8CA0 /* push-to-checkout.sample */,
+				568AE9D5C84D076A836EDE9C /* sendemail-validate.sample */,
+				A48117861C53FC336F70B8F0 /* update.sample */,
+			);
+			path = hooks;
+			sourceTree = "<group>";
+		};
+		21DF7239BBD0A17E8E7B1765 /* heads */ = {
+			isa = PBXGroup;
+			children = (
+				F05A320460C598FDB7A6F18E /* main */,
+			);
+			path = heads;
+			sourceTree = "<group>";
+		};
+		2C302B45B3625AA5822866C5 /* refs */ = {
+			isa = PBXGroup;
+			children = (
+				635D222A1FB7F1300C66C8B9 /* remotes */,
+			);
+			path = refs;
+			sourceTree = "<group>";
+		};
+		3F6B8B80353AC8D8E1FE9175 /* pack */ = {
+			isa = PBXGroup;
+			children = (
+				03E574C83471F3C0CE60C55A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx */,
+				5D438BF2BB8652A52830F32A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.pack */,
+				1C75F4409BF1362AD14E2516 /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.rev */,
+			);
+			path = pack;
+			sourceTree = "<group>";
+		};
 		45220B900744FFC91837BE71 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -64,9 +164,16 @@
 		4DE0F42184FA3D190E0C1E0C /* SpeakBook */ = {
 			isa = PBXGroup;
 			children = (
+				1F8B0AF1983197D55337CE8C /* .gitignore */,
 				C46B1EC98D3BFB1365312BB3 /* audioReaderApp.swift */,
+				AB8DD17A82BEF1338324EEBC /* download_models.sh */,
 				D0431A4D1427F0853FBAB792 /* install.sh */,
 				195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */,
+				F66CB43BB854C7CFF85EA342 /* .git */,
+				45220B900744FFC91837BE71 /* Models */,
+				6B9C4F7EB347FBB04F41662E /* Services */,
+				94E17895AE2DFB09668F6899 /* Utilities */,
+				60966B783465222CE5C6F744 /* Views */,
 			);
 			name = SpeakBook;
 			path = .;
@@ -84,6 +191,23 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		635D222A1FB7F1300C66C8B9 /* remotes */ = {
+			isa = PBXGroup;
+			children = (
+				E3B167819C46C76BBEA16662 /* origin */,
+			);
+			path = remotes;
+			sourceTree = "<group>";
+		};
+		6B8D2A96CEE3C7D4C6CDE0A0 /* objects */ = {
+			isa = PBXGroup;
+			children = (
+				A39F257FCF750D69B3547762 /* info */,
+				3F6B8B80353AC8D8E1FE9175 /* pack */,
+			);
+			path = objects;
+			sourceTree = "<group>";
+		};
 		6B9C4F7EB347FBB04F41662E /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -98,8 +222,27 @@
 			isa = PBXGroup;
 			children = (
 				C6E5BBD0C03EF2A21F41A569 /* FileTypes.swift */,
+				AB6C8CCD4A40561C27169BE0 /* PlatformTypes.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		A39F257FCF750D69B3547762 /* info */ = {
+			isa = PBXGroup;
+			children = (
+				2506F95D34BB13A27498D2C5 /* commit-graph */,
+				CBEF7EBA8A8A36DF79B2F233 /* packs */,
+			);
+			path = info;
+			sourceTree = "<group>";
+		};
+		D0186415093AB1F7C3B741AC /* logs */ = {
+			isa = PBXGroup;
+			children = (
+				74D49178922B1166E048ADDD /* HEAD */,
+				EAACD5862348595AAB81AA7B /* refs */,
+			);
+			path = logs;
 			sourceTree = "<group>";
 		};
 		D9ADF156351877E45AC622CB /* Products */ = {
@@ -110,6 +253,32 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E1354B64B23A4840FF2AD7BE /* info */ = {
+			isa = PBXGroup;
+			children = (
+				3A4AE2BF40D7ED2C02DC19C1 /* exclude */,
+				E47468036B9A506B7C2399D4 /* refs */,
+			);
+			path = info;
+			sourceTree = "<group>";
+		};
+		E3B167819C46C76BBEA16662 /* origin */ = {
+			isa = PBXGroup;
+			children = (
+				D49E9ACF34A98D563A303165 /* main */,
+			);
+			path = origin;
+			sourceTree = "<group>";
+		};
+		EAACD5862348595AAB81AA7B /* refs */ = {
+			isa = PBXGroup;
+			children = (
+				21DF7239BBD0A17E8E7B1765 /* heads */,
+				FFDF94E9DE64F7ACCA8803C3 /* remotes */,
+			);
+			path = refs;
+			sourceTree = "<group>";
+		};
 		EB4BD70A8D3186ED9E912021 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -118,9 +287,36 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		F41D3B995499BF9BF6690B05 /* origin */ = {
+			isa = PBXGroup;
+			children = (
+				75A096DA473C799C625D0345 /* main */,
+			);
+			path = origin;
+			sourceTree = "<group>";
+		};
+		F66CB43BB854C7CFF85EA342 /* .git */ = {
+			isa = PBXGroup;
+			children = (
+				C38BCAC7A191BEB5028C1983 /* COMMIT_EDITMSG */,
+				F906AFC01BE29CB678497592 /* config */,
+				A62AC737E2F1D84B460C6924 /* description */,
+				DA0CEAF8D8E49ACBE5BB67A3 /* HEAD */,
+				63F4A17A27E6585A8C95AE94 /* index */,
+				6A2D6A59630C72930ABA5F34 /* packed-refs */,
+				19AF5A88A8ECFF09B97FDC41 /* hooks */,
+				E1354B64B23A4840FF2AD7BE /* info */,
+				D0186415093AB1F7C3B741AC /* logs */,
+				6B8D2A96CEE3C7D4C6CDE0A0 /* objects */,
+				2C302B45B3625AA5822866C5 /* refs */,
+			);
+			path = .git;
+			sourceTree = "<group>";
+		};
 		FC8F39C48297BECBE9CFE808 = {
 			isa = PBXGroup;
 			children = (
+				F66CB43BB854C7CFF85EA342 /* .git */,
 				45220B900744FFC91837BE71 /* Models */,
 				EB4BD70A8D3186ED9E912021 /* Packages */,
 				6B9C4F7EB347FBB04F41662E /* Services */,
@@ -129,6 +325,14 @@
 				60966B783465222CE5C6F744 /* Views */,
 				D9ADF156351877E45AC622CB /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		FFDF94E9DE64F7ACCA8803C3 /* remotes */ = {
+			isa = PBXGroup;
+			children = (
+				F41D3B995499BF9BF6690B05 /* origin */,
+			);
+			path = remotes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,7 +352,7 @@
 			);
 			name = SpeakBook;
 			packageProductDependencies = (
-				8A3ADBD1CFEDC3FC2C240027 /* FluidAudioTTS */,
+				635597B7354DF9C0E5FC966B /* FluidAudio */,
 			);
 			productName = SpeakBook;
 			productReference = 427CAD6663461779CA16FC48 /* SpeakBook.app */;
@@ -164,6 +368,7 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					CD220F5701AE2B3BD662C319 = {
+						DevelopmentTeam = VMX95L6446;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -181,6 +386,7 @@
 			packageReferences = (
 				C06A0EF2ED1878C873FC30F7 /* XCLocalSwiftPackageReference "../FluidAudio" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -194,8 +400,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BD9E37A7537FBDF139922B2 /* applypatch-msg.sample in Resources */,
+				7651DEC31FCB4ECA58589A82 /* commit-msg.sample in Resources */,
+				AA11E42633820E966A95F927 /* download_models.sh in Resources */,
+				34570AD99A8EC86430913610 /* fsmonitor-watchman.sample in Resources */,
 				7BD81B99DB790DA7FAABE28A /* install.sh in Resources */,
+				83359A6254979F59AA7859AD /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx in Resources */,
+				B065FF2EC3CB0AD3DD49C73D /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.pack in Resources */,
+				4906259EB048D59EEEF9F6E7 /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.rev in Resources */,
+				68A20056AD39048A3BC287B2 /* post-update.sample in Resources */,
+				2706FE0D64A606BD43F65608 /* pre-applypatch.sample in Resources */,
+				FC5042945E462DFFC2B79B8B /* pre-commit.sample in Resources */,
+				29473232EAE1FABA46EF7251 /* pre-merge-commit.sample in Resources */,
+				C7578003128253B20A097BA8 /* pre-push.sample in Resources */,
+				EEC345BF13BA90CF54827B0A /* pre-rebase.sample in Resources */,
+				BCF462C7B424F9D3AF87EDB6 /* pre-receive.sample in Resources */,
+				FC13E744753ECA19AFC236B3 /* prepare-commit-msg.sample in Resources */,
+				B91EDBD1BBCA7E19A1465D5B /* push-to-checkout.sample in Resources */,
+				D36543F5F7DE53875D0F67DE /* sendemail-validate.sample in Resources */,
 				2C4F3E2F19BB2FF98709E888 /* test_tts_accuracy.txt in Resources */,
+				DF130524F6F1F33F848020A6 /* update.sample in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +437,7 @@
 				4BFD2D8BEEC6AEB192399CCA /* LibraryView.swift in Sources */,
 				C2805B4FF9A7125C49A71583 /* PDFMetadataExtractor.swift in Sources */,
 				6CC1D9A85049E1CA19E42126 /* PDFReaderView.swift in Sources */,
+				756052856EB8210D70193752 /* PlatformTypes.swift in Sources */,
 				4E72B575B424622103341B3E /* ReaderView.swift in Sources */,
 				869146C3D7C39C6F00305222 /* TTSControlBar.swift in Sources */,
 				E5C0200BCF22860D9E5C6342 /* TTSService.swift in Sources */,
@@ -278,11 +503,12 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -338,10 +564,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -353,7 +580,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = LQASNXF5ZN;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_UIBackgroundModes = audio;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -361,7 +587,11 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.speakbook.SpeakBook;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -371,7 +601,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = LQASNXF5ZN;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_UIBackgroundModes = audio;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -379,7 +608,11 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.speakbook.SpeakBook;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -415,9 +648,9 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8A3ADBD1CFEDC3FC2C240027 /* FluidAudioTTS */ = {
+		635597B7354DF9C0E5FC966B /* FluidAudio */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = FluidAudioTTS;
+			productName = FluidAudio;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -157,6 +157,7 @@ struct EPubReaderView: View {
     }
 }
 
+#if os(iOS)
 struct EPubContentView: UIViewRepresentable {
     let metadata: EPubMetadata
     let extractedPath: URL
@@ -174,33 +175,121 @@ struct EPubContentView: UIViewRepresentable {
         context.coordinator.onTextExtracted = onTextExtracted
         context.coordinator.webView = webView
 
-        loadChapter(webView: webView, index: currentChapterIndex, coordinator: context.coordinator)
+        EPubContentViewHelper.loadChapter(
+            webView: webView, index: currentChapterIndex,
+            metadata: metadata, extractedPath: extractedPath,
+            coordinator: context.coordinator
+        )
 
         return webView
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
-        if context.coordinator.currentIndex != currentChapterIndex {
-            context.coordinator.currentIndex = currentChapterIndex
-            loadChapter(webView: webView, index: currentChapterIndex, coordinator: context.coordinator)
+        EPubContentViewHelper.handleUpdate(
+            webView: webView, coordinator: context.coordinator,
+            currentChapterIndex: currentChapterIndex,
+            highlightSentence: highlightSentence,
+            metadata: metadata, extractedPath: extractedPath
+        )
+    }
+
+    func makeCoordinator() -> EPubCoordinator {
+        EPubCoordinator(currentIndex: currentChapterIndex)
+    }
+}
+#else
+struct EPubContentView: NSViewRepresentable {
+    let metadata: EPubMetadata
+    let extractedPath: URL
+    @Binding var currentChapterIndex: Int
+    var highlightSentence: String
+    var onTextExtracted: ((String) -> Void)?
+
+    func makeNSView(context: Context) -> WKWebView {
+        let configuration = WKWebViewConfiguration()
+        configuration.preferences.isTextInteractionEnabled = true
+
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = context.coordinator
+        context.coordinator.onTextExtracted = onTextExtracted
+        context.coordinator.webView = webView
+
+        EPubContentViewHelper.loadChapter(
+            webView: webView, index: currentChapterIndex,
+            metadata: metadata, extractedPath: extractedPath,
+            coordinator: context.coordinator
+        )
+
+        return webView
+    }
+
+    func updateNSView(_ webView: WKWebView, context: Context) {
+        EPubContentViewHelper.handleUpdate(
+            webView: webView, coordinator: context.coordinator,
+            currentChapterIndex: currentChapterIndex,
+            highlightSentence: highlightSentence,
+            metadata: metadata, extractedPath: extractedPath
+        )
+    }
+
+    func makeCoordinator() -> EPubCoordinator {
+        EPubCoordinator(currentIndex: currentChapterIndex)
+    }
+}
+#endif
+
+// MARK: - Shared Coordinator
+
+class EPubCoordinator: NSObject, WKNavigationDelegate {
+    var currentIndex: Int
+    var currentHighlight: String = ""
+    var onTextExtracted: ((String) -> Void)?
+    weak var webView: WKWebView?
+
+    init(currentIndex: Int) {
+        self.currentIndex = currentIndex
+    }
+
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if navigationAction.navigationType == .linkActivated {
+            decisionHandler(.cancel)
+        } else {
+            decisionHandler(.allow)
+        }
+    }
+}
+
+// MARK: - Shared Helper Methods
+
+enum EPubContentViewHelper {
+    static func handleUpdate(
+        webView: WKWebView, coordinator: EPubCoordinator,
+        currentChapterIndex: Int,
+        highlightSentence: String,
+        metadata: EPubMetadata, extractedPath: URL
+    ) {
+        if coordinator.currentIndex != currentChapterIndex {
+            coordinator.currentIndex = currentChapterIndex
+            loadChapter(
+                webView: webView, index: currentChapterIndex,
+                metadata: metadata, extractedPath: extractedPath,
+                coordinator: coordinator
+            )
         }
 
-        // Update highlighting when sentence changes
-        if context.coordinator.currentHighlight != highlightSentence {
-            context.coordinator.currentHighlight = highlightSentence
+        if coordinator.currentHighlight != highlightSentence {
+            coordinator.currentHighlight = highlightSentence
             highlightText(in: webView, text: highlightSentence)
         }
     }
 
-    private func highlightText(in webView: WKWebView, text: String) {
+    static func highlightText(in webView: WKWebView, text: String) {
         guard !text.isEmpty else {
-            // Clear highlighting
             let clearJS = "window.clearTTSHighlight && window.clearTTSHighlight();"
             webView.evaluateJavaScript(clearJS, completionHandler: nil)
             return
         }
 
-        // Escape text for JavaScript
         let escapedText = text
             .replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "'", with: "\\'")
@@ -211,7 +300,11 @@ struct EPubContentView: UIViewRepresentable {
         webView.evaluateJavaScript(highlightJS, completionHandler: nil)
     }
 
-    private func loadChapter(webView: WKWebView, index: Int, coordinator: Coordinator) {
+    static func loadChapter(
+        webView: WKWebView, index: Int,
+        metadata: EPubMetadata, extractedPath: URL,
+        coordinator: EPubCoordinator
+    ) {
         guard index < metadata.spine.count else { return }
 
         let chapterId = metadata.spine[index]
@@ -227,28 +320,23 @@ struct EPubContentView: UIViewRepresentable {
                 let styledHTML = injectStyles(into: htmlContent)
                 webView.loadHTMLString(styledHTML, baseURL: baseURL)
 
-                // Extract plain text for TTS
                 let plainText = extractPlainText(from: htmlContent)
                 coordinator.onTextExtracted?(plainText)
             }
         }
     }
 
-    private func extractPlainText(from html: String) -> String {
-        // Simple HTML tag removal for TTS
+    static func extractPlainText(from html: String) -> String {
         var text = html
 
-        // Remove script and style blocks
         let scriptPattern = #"<script[^>]*>[\s\S]*?</script>"#
         let stylePattern = #"<style[^>]*>[\s\S]*?</style>"#
         text = text.replacingOccurrences(of: scriptPattern, with: "", options: .regularExpression)
         text = text.replacingOccurrences(of: stylePattern, with: "", options: .regularExpression)
 
-        // Remove all HTML tags
         let tagPattern = #"<[^>]+>"#
         text = text.replacingOccurrences(of: tagPattern, with: " ", options: .regularExpression)
 
-        // Decode HTML entities
         text = text.replacingOccurrences(of: "&nbsp;", with: " ")
         text = text.replacingOccurrences(of: "&amp;", with: "&")
         text = text.replacingOccurrences(of: "&lt;", with: "<")
@@ -256,14 +344,13 @@ struct EPubContentView: UIViewRepresentable {
         text = text.replacingOccurrences(of: "&quot;", with: "\"")
         text = text.replacingOccurrences(of: "&#39;", with: "'")
 
-        // Normalize whitespace
         let whitespacePattern = #"\s+"#
         text = text.replacingOccurrences(of: whitespacePattern, with: " ", options: .regularExpression)
 
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private func injectStyles(into html: String) -> String {
+    static func injectStyles(into html: String) -> String {
         let customCSS = """
         <style>
             body {
@@ -311,11 +398,9 @@ struct EPubContentView: UIViewRepresentable {
                 window.clearTTSHighlight();
                 if (!searchText || searchText.length < 3) return;
 
-                // Normalize the search text
                 var normalizedSearch = searchText.trim().replace(/\\s+/g, ' ');
                 if (normalizedSearch.length < 3) return;
 
-                // Use TreeWalker to find text nodes
                 var walker = document.createTreeWalker(
                     document.body,
                     NodeFilter.SHOW_TEXT,
@@ -331,7 +416,6 @@ struct EPubContentView: UIViewRepresentable {
                     }
                 }
 
-                // Build full text and find position
                 var fullText = '';
                 var nodeMap = [];
                 textNodes.forEach(function(n) {
@@ -340,20 +424,17 @@ struct EPubContentView: UIViewRepresentable {
                     nodeMap.push({ node: n, start: start, end: fullText.length });
                 });
 
-                // Find best match (fuzzy)
                 var normalizedFull = fullText.replace(/\\s+/g, ' ');
                 var searchLower = normalizedSearch.toLowerCase();
                 var idx = normalizedFull.toLowerCase().indexOf(searchLower);
 
                 if (idx === -1) {
-                    // Try first 50 chars as fallback
                     var shortSearch = searchLower.substring(0, 50);
                     idx = normalizedFull.toLowerCase().indexOf(shortSearch);
                 }
 
                 if (idx === -1) return;
 
-                // Find the matching node(s)
                 var matchStart = idx;
                 var matchEnd = idx + normalizedSearch.length;
 
@@ -382,7 +463,6 @@ struct EPubContentView: UIViewRepresentable {
                         if (after) parent.insertBefore(document.createTextNode(after), textNode);
                         parent.removeChild(textNode);
 
-                        // Scroll into view
                         span.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         break;
                     }
@@ -403,27 +483,5 @@ struct EPubContentView: UIViewRepresentable {
 
         return "<html><head>\(customCSS)</head><body>\(html)</body></html>"
     }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(currentIndex: currentChapterIndex)
-    }
-
-    class Coordinator: NSObject, WKNavigationDelegate {
-        var currentIndex: Int
-        var currentHighlight: String = ""
-        var onTextExtracted: ((String) -> Void)?
-        weak var webView: WKWebView?
-
-        init(currentIndex: Int) {
-            self.currentIndex = currentIndex
-        }
-
-        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-            if navigationAction.navigationType == .linkActivated {
-                decisionHandler(.cancel)
-            } else {
-                decisionHandler(.allow)
-            }
-        }
-    }
 }
+

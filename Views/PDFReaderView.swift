@@ -15,12 +15,13 @@ struct PDFReaderView: View {
                 ZStack(alignment: .bottom) {
                     PDFKitView(
                         document: document,
-                        currentPage: $currentPage
+                        currentPage: $currentPage,
+                        highlightSentence: showTTSControls ? ttsService.currentSentence : ""
                     )
                     .ignoresSafeArea(edges: .bottom)
 
-                    // Current sentence overlay
-                    if showTTSControls && !ttsService.currentSentence.isEmpty {
+                    // Current sentence overlay (debug mode only)
+                    if showTTSControls && ttsService.debugMode && !ttsService.currentSentence.isEmpty {
                         currentSentenceOverlay
                     }
                 }
@@ -66,14 +67,32 @@ struct PDFReaderView: View {
         }
         .onAppear {
             loadPDF()
+            ttsService.onPlaybackFinished = {
+                print("[TTS] onPlaybackFinished called. showTTSControls=\(showTTSControls), currentPage=\(currentPage), totalPages=\(totalPages)")
+                guard showTTSControls, currentPage < totalPages - 1 else {
+                    print("[TTS] Guard failed, not advancing")
+                    return
+                }
+                currentPage += 1
+                print("[TTS] Advanced to page \(currentPage)")
+                Task {
+                    if let text = getCurrentPageText() {
+                        print("[TTS] Got text for page \(currentPage), starting speech (\(text.prefix(60))...)")
+                        await ttsService.speak(text: text)
+                    } else {
+                        print("[TTS] No text for page \(currentPage)")
+                    }
+                }
+            }
         }
         .onDisappear {
+            ttsService.onPlaybackFinished = nil
             ttsService.stop()
             saveProgress()
         }
         .onChange(of: currentPage) { _, newValue in
             updateProgress(page: newValue)
-            // Stop TTS when page changes
+            // Stop TTS when user manually changes page
             if ttsService.isPlaying {
                 ttsService.stop()
             }
@@ -126,7 +145,32 @@ struct PDFReaderView: View {
               let page = document.page(at: currentPage) else {
             return nil
         }
-        return page.string
+        guard let raw = page.string else { return nil }
+        return cleanPageText(raw)
+    }
+
+    /// Strip page numbers, footnote markers, headers/footers and other noise from extracted PDF text.
+    private func cleanPageText(_ text: String) -> String? {
+        let lines = text.components(separatedBy: .newlines)
+        var cleaned: [String] = []
+
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+
+            // Skip empty lines
+            if trimmed.isEmpty { continue }
+
+            // Skip standalone numbers (page numbers, footnote numbers)
+            if trimmed.allSatisfy({ $0.isNumber || $0 == "." || $0 == "-" || $0 == " " }) { continue }
+
+            // Skip very short lines that look like headers/footers (e.g. "Chapter 3", "| 42")
+            if trimmed.count < 6 { continue }
+
+            cleaned.append(trimmed)
+        }
+
+        let result = cleaned.joined(separator: " ")
+        return result.isEmpty ? nil : result
     }
 
     private var pageIndicator: some View {
@@ -181,11 +225,14 @@ struct PDFReaderView: View {
     private func saveProgress() {
         book.currentPage = currentPage
     }
+
 }
 
+#if os(iOS)
 struct PDFKitView: UIViewRepresentable {
     let document: PDFDocument
     @Binding var currentPage: Int
+    var highlightSentence: String
 
     func makeUIView(context: Context) -> PDFView {
         let pdfView = PDFView()
@@ -218,28 +265,129 @@ struct PDFKitView: UIViewRepresentable {
                 }
             }
         }
+
+        PDFHighlightHelper.updateHighlight(
+            in: pdfView, document: document,
+            text: highlightSentence, coordinator: context.coordinator
+        )
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
 
     class Coordinator: NSObject {
         var parent: PDFKitView
-
-        init(_ parent: PDFKitView) {
-            self.parent = parent
-        }
+        var currentHighlight: String = ""
+        var isProgrammaticSelection = false
+        init(_ parent: PDFKitView) { self.parent = parent }
 
         @objc func pageChanged(_ notification: Notification) {
             guard let pdfView = notification.object as? PDFView,
                   let currentPage = pdfView.currentPage,
                   let document = pdfView.document else { return }
-
             let pageIndex = document.index(for: currentPage)
-            DispatchQueue.main.async {
-                self.parent.currentPage = pageIndex
+            DispatchQueue.main.async { self.parent.currentPage = pageIndex }
+        }
+    }
+}
+#else
+struct PDFKitView: NSViewRepresentable {
+    let document: PDFDocument
+    @Binding var currentPage: Int
+    var highlightSentence: String
+
+    func makeNSView(context: Context) -> PDFView {
+        let pdfView = PDFView()
+        pdfView.document = document
+        pdfView.autoScales = true
+        pdfView.displayMode = .singlePage
+
+        if let page = document.page(at: currentPage) {
+            pdfView.go(to: page)
+        }
+
+        NotificationCenter.default.addObserver(
+            context.coordinator,
+            selector: #selector(Coordinator.pageChanged(_:)),
+            name: .PDFViewPageChanged,
+            object: pdfView
+        )
+
+        return pdfView
+    }
+
+    func updateNSView(_ pdfView: PDFView, context: Context) {
+        if let currentPDFPage = pdfView.currentPage {
+            let pageIndex = document.index(for: currentPDFPage)
+            if pageIndex != currentPage {
+                if let page = document.page(at: currentPage) {
+                    pdfView.go(to: page)
+                }
             }
         }
+
+        PDFHighlightHelper.updateHighlight(
+            in: pdfView, document: document,
+            text: highlightSentence, coordinator: context.coordinator
+        )
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    class Coordinator: NSObject {
+        var parent: PDFKitView
+        var currentHighlight: String = ""
+        var isProgrammaticSelection = false
+        init(_ parent: PDFKitView) { self.parent = parent }
+
+        @objc func pageChanged(_ notification: Notification) {
+            guard let pdfView = notification.object as? PDFView,
+                  let currentPage = pdfView.currentPage,
+                  let document = pdfView.document else { return }
+            let pageIndex = document.index(for: currentPage)
+            DispatchQueue.main.async { self.parent.currentPage = pageIndex }
+        }
+    }
+}
+#endif
+
+// MARK: - Shared Highlight Logic
+
+enum PDFHighlightHelper {
+    static func updateHighlight(
+        in pdfView: PDFView, document: PDFDocument,
+        text: String, coordinator: PDFKitView.Coordinator
+    ) {
+        guard coordinator.currentHighlight != text else { return }
+        coordinator.currentHighlight = text
+
+        // Guard programmatic selection changes so they don't overwrite user selection
+        coordinator.isProgrammaticSelection = true
+        defer { coordinator.isProgrammaticSelection = false }
+
+        guard !text.isEmpty else {
+            pdfView.clearSelection()
+            return
+        }
+
+        // Try to find exact text in the document
+        if let selection = document.findString(text, withOptions: .caseInsensitive).first {
+            selection.color = .yellow
+            pdfView.setCurrentSelection(selection, animate: true)
+            pdfView.scrollSelectionToVisible(nil)
+            return
+        }
+
+        // Fallback: try a shorter prefix
+        let prefix = String(text.prefix(60))
+        if prefix.count > 10,
+           let selection = document.findString(prefix, withOptions: .caseInsensitive).first {
+            selection.color = .yellow
+            pdfView.setCurrentSelection(selection, animate: true)
+            pdfView.scrollSelectionToVisible(nil)
+            return
+        }
+
+        // No match found — clear any stale selection
+        pdfView.clearSelection()
     }
 }

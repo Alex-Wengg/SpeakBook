@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 import Compression
 
 struct EPubMetadata {
