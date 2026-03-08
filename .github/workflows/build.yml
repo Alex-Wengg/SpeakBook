@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-15
+    strategy:
+      matrix:
+        destination:
+          - platform=macOS
+          - platform=iOS Simulator,name=iPhone 16
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Point FluidAudio to git URL for CI
+        run: |
+          sed -i '' 's|path: ../FluidAudio|url: https://github.com/FluidInference/FluidAudio.git\n    branch: main|' project.yml
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build
+        run: |
+          xcodebuild \
+            -project SpeakBook.xcodeproj \
+            -scheme SpeakBook \
+            -destination '${{ matrix.destination }}' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
