@@ -1,6 +1,6 @@
 import Foundation
 import AVFoundation
-import FluidAudioTTS
+import FluidAudio
 import os.log
 
 private let ttsLogger = Logger(subsystem: "com.speakbook.app", category: "TTS")
@@ -17,27 +17,35 @@ final class TTSService {
         case error(String)
     }
 
+    enum TTSEngine: String, CaseIterable {
+        case pocketTTS = "PocketTTS"
+        case kokoro = "Kokoro"
+    }
+
     private(set) var state: State = .idle
     private(set) var loadingMessage: String = ""
     private(set) var currentVoice: String = "alba"
+    private(set) var currentEngine: TTSEngine = .pocketTTS
     private(set) var progress: Double = 0.0
-    private(set) var batchPrefillVersion: String = "Not loaded"
-    private(set) var availableVersions: [String] = []
     var debugMode: Bool = false
+    var volume: Float = 1.0 {
+        didSet { audioEngine?.mainMixerNode.outputVolume = volume }
+    }
     private(set) var currentSentence: String = ""
-    private(set) var isThrottling: Bool = false  // True when generation < real-time
-    private(set) var currentRTFx: Double = 0.0   // Current real-time factor (>1.0 = faster than real-time)
     private(set) var currentSentenceIndex: Int = -1
     private(set) var sentences: [String] = []
+    var onPlaybackFinished: (() -> Void)?
 
-    private var manager: PocketTtsManager?
+    private var pocketManager: PocketTtsManager?
+    private var kokoroManager: KokoroTtsManager?
     private var audioEngine: AVAudioEngine?
     private var playerNode: AVAudioPlayerNode?
     private var synthesisTask: Task<Void, Never>?
     private var idleUnloadTask: Task<Void, Never>?
     private var isStopped = false
-    private var totalFrames = 0
-    private var playedFrames = 0
+    private var totalSamples = 0
+    private var playedSamples = 0
+    private var lastBufferFinished = false
 
     /// Seconds of idle before unloading models to prevent thermal throttling
     private let idleUnloadDelay: TimeInterval = 60
@@ -47,7 +55,13 @@ final class TTSService {
     }
 
     var availableVoices: [String] {
-        ["alba", "heart", "bella"]
+        switch currentEngine {
+        case .pocketTTS:
+            return ["alba", "heart", "bella"]
+        case .kokoro:
+            // American English voices only (tested/supported)
+            return TtsConstants.availableVoices.filter { $0.hasPrefix("af_") || $0.hasPrefix("am_") }
+        }
     }
 
     init() {
@@ -55,69 +69,123 @@ final class TTSService {
     }
 
     private func setupAudioSession() {
+        #if os(iOS)
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Failed to setup audio session: \(error)")
         }
+        #endif
+    }
+
+    // MARK: - Engine Management
+
+    func setEngine(_ engine: TTSEngine) async {
+        guard engine != currentEngine else { return }
+        stop()
+        cancelIdleUnloadTimer()
+        await unloadModels()
+
+        currentEngine = engine
+        switch engine {
+        case .pocketTTS:
+            currentVoice = "alba"
+        case .kokoro:
+            currentVoice = TtsConstants.recommendedVoice
+        }
+        ttsLogger.notice("Switched to engine: \(engine.rawValue), voice: \(self.currentVoice)")
     }
 
     func initialize() async {
-        guard manager == nil else { return }
+        switch currentEngine {
+        case .pocketTTS:
+            await initializePocketTTS()
+        case .kokoro:
+            await initializeKokoro()
+        }
+    }
+
+    private func initializePocketTTS() async {
+        guard pocketManager == nil else { return }
 
         let initStart = Date()
         state = .loadingModels
-        loadingMessage = "Loading TTS models..."
-        ttsLogger.notice("Starting TTS initialization")
+        loadingMessage = "Loading PocketTTS models..."
+        ttsLogger.notice("Starting PocketTTS initialization")
 
         do {
             let mgr = PocketTtsManager(defaultVoice: currentVoice)
             try await mgr.initialize()
-            manager = mgr
-
-            // Get batch prefill version info
-            let version = await mgr.getBatchPrefillVersion()
-            batchPrefillVersion = version.displayName
-            ttsLogger.notice("Batch prefill: \(version.displayName)")
-
-            // Get available versions
-            let versions = await mgr.getAvailableVersions()
-            self.availableVersions = Array(versions.map { $0.rawValue }.sorted().reversed())
-            ttsLogger.notice("Available versions: \(self.availableVersions.joined(separator: ", "))")
+            pocketManager = mgr
 
             let elapsed = Date().timeIntervalSince(initStart)
-            ttsLogger.notice("TTS models loaded in \(String(format: "%.0f", elapsed * 1000))ms")
+            ttsLogger.notice("PocketTTS models loaded in \(String(format: "%.0f", elapsed * 1000))ms")
             loadingMessage = ""
             state = .ready
         } catch {
             loadingMessage = ""
-            state = .error("Failed to load TTS: \(error.localizedDescription)")
+            state = .error("Failed to load PocketTTS: \(error.localizedDescription)")
         }
     }
+
+    private func initializeKokoro() async {
+        guard kokoroManager == nil else { return }
+
+        let initStart = Date()
+        state = .loadingModels
+        loadingMessage = "Loading Kokoro models..."
+        ttsLogger.notice("Starting Kokoro initialization")
+
+        do {
+            let mgr = KokoroTtsManager(defaultVoice: currentVoice)
+            try await mgr.initialize()
+            kokoroManager = mgr
+
+            let elapsed = Date().timeIntervalSince(initStart)
+            ttsLogger.notice("Kokoro models loaded in \(String(format: "%.0f", elapsed * 1000))ms")
+            loadingMessage = ""
+            state = .ready
+        } catch {
+            print("[Kokoro init error] \(error)")
+            loadingMessage = ""
+            state = .error("Failed to load Kokoro: \(error.localizedDescription)")
+        }
+    }
+
+    private var isEngineReady: Bool {
+        switch currentEngine {
+        case .pocketTTS: return pocketManager != nil
+        case .kokoro: return kokoroManager != nil
+        }
+    }
+
+    // MARK: - Synthesis
 
     func speak(text: String) async {
         guard !text.isEmpty else { return }
 
-        // Cancel any pending model unload
         cancelIdleUnloadTimer()
 
-        if manager == nil {
+        if !isEngineReady {
             await initialize()
         }
 
-        guard let manager = manager else { return }
+        guard isEngineReady else { return }
 
         stop()
-        cancelIdleUnloadTimer()  // Cancel again since stop() starts the timer
+        cancelIdleUnloadTimer()
         isStopped = false
-        playedFrames = 0
-        totalFrames = 0
+        lastBufferFinished = false
+        playedSamples = 0
+        totalSamples = 0
         currentSentence = ""
         currentSentenceIndex = -1
-        sentences = []
 
-        // Setup audio engine
+        let chunks = splitIntoChunks(text)
+        sentences = chunks
+        let totalChunks = chunks.count
+
         setupAudioEngine()
 
         guard let engine = audioEngine, let playerNode = playerNode else {
@@ -131,128 +199,183 @@ final class TTSService {
         let startTime = Date()
         synthesisTask = Task {
             do {
-                let stream = await manager.synthesizeStream(text: text, voice: currentVoice)
-
-                // Batch frames to reduce scheduling overhead (5 frames = 400ms chunks)
-                let batchSize = 5
-                // Pre-buffer before starting playback (75 frames = 6 seconds runway)
-                // Needed because thermal throttling can drop RTFx to 0.5-0.7x
-                let preBufferFrames = 75
-                var sampleBuffer: [Float] = []
-                var frameCount = 0
-                var totalBufferedFrames = 0
                 var hasStartedPlayback = false
+                var cumulativeSamples = 0
 
-                var frameTimings: [Double] = []
-                var lastFrameTime = Date()
-
-                for try await frame in stream {
+                for (index, chunk) in chunks.enumerated() {
                     guard !isStopped else { break }
 
-                    // Track time between frames
-                    let now = Date()
-                    let frameDelta = now.timeIntervalSince(lastFrameTime) * 1000
-                    frameTimings.append(frameDelta)
-                    lastFrameTime = now
+                    await MainActor.run {
+                        self.currentSentenceIndex = index
+                        self.currentSentence = chunk
+                    }
 
-                    // Update RTFx every 10 frames
-                    if frame.frameIndex > 0 && frame.frameIndex % 10 == 0 {
-                        let avgMs = frameTimings.suffix(10).reduce(0, +) / 10.0
-                        let rtfx = 80.0 / avgMs  // 80ms per frame / actual time = RTFx
-                        ttsLogger.notice("Frame \(frame.frameIndex): avg \(String(format: "%.1f", avgMs))ms/frame, RTFx: \(String(format: "%.2f", rtfx))x")
+                    ttsLogger.notice("[\(self.currentEngine.rawValue)] Synthesizing chunk \(index + 1)/\(totalChunks)")
+                    let chunkStart = Date()
 
-                        // Update throttling status on main thread
-                        let throttling = rtfx < 1.0
+                    let samples: [Float]
+                    switch currentEngine {
+                    case .pocketTTS:
+                        samples = try await synthesizePocketTTS(chunk)
+                    case .kokoro:
+                        samples = try await synthesizeKokoro(chunk)
+                    }
+
+                    guard !isStopped else { break }
+
+                    let chunkTime = Date().timeIntervalSince(chunkStart)
+                    let chunkDuration = Double(samples.count) / 24000.0
+                    ttsLogger.notice("Chunk \(index + 1) done: \(String(format: "%.1f", chunkDuration))s audio in \(String(format: "%.1f", chunkTime))s (\(String(format: "%.1f", chunkDuration / chunkTime))x RTFx)")
+
+                    cumulativeSamples += samples.count
+                    totalSamples = cumulativeSamples
+
+                    // Append silence to samples based on trailing punctuation
+                    var samplesWithPause = samples
+                    if index < totalChunks - 1 {
+                        let pause = pauseDuration(after: chunk)
+                        if pause > 0 {
+                            samplesWithPause += [Float](repeating: 0, count: Int(24000.0 * pause))
+                        }
+                    }
+
+                    cumulativeSamples += samplesWithPause.count - samples.count
+                    let buffer = createPCMBuffer(from: samplesWithPause)
+                    let chunkIndex = index
+                    let isLastChunk = index == totalChunks - 1
+                    playerNode.scheduleBuffer(buffer) { [weak self] in
                         Task { @MainActor in
-                            self.currentRTFx = rtfx
-                            if throttling != self.isThrottling {
-                                self.isThrottling = throttling
-                                if throttling {
-                                    ttsLogger.warning("⚠️ Generation slower than real-time (RTFx: \(String(format: "%.2f", rtfx))x) - audio may stutter")
-                                }
+                            guard let self = self, !self.isStopped else { return }
+                            self.progress = Double(chunkIndex + 1) / Double(totalChunks)
+                            if isLastChunk {
+                                self.lastBufferFinished = true
                             }
                         }
                     }
 
-                    totalFrames = max(totalFrames, frame.frameIndex + 1)
-
-                    // Update current sentence if chunk changed (no await - use nonisolated)
-                    if frame.chunkIndex != self.currentSentenceIndex {
-                        let chunkIndex = frame.chunkIndex
-                        let chunkText = frame.chunkText
-                        Task { @MainActor in
-                            self.currentSentenceIndex = chunkIndex
-                            self.currentSentence = chunkText
-                            if self.sentences.count <= chunkIndex {
-                                self.sentences.append(chunkText)
-                            }
+                    if !hasStartedPlayback {
+                        let latency = Date().timeIntervalSince(startTime)
+                        ttsLogger.notice("First chunk ready in \(String(format: "%.0f", latency * 1000))ms, starting playback")
+                        await MainActor.run {
+                            self.loadingMessage = ""
+                            self.state = .playing
                         }
-                    }
-
-                    // Accumulate samples
-                    sampleBuffer.append(contentsOf: frame.samples)
-                    frameCount += 1
-
-                    // Schedule batch when we have enough frames or it's the last frame
-                    if frameCount >= batchSize || frame.isLast {
-                        let buffer = createPCMBuffer(from: sampleBuffer)
-                        let framesInBatch = frameCount
-
-                        playerNode.scheduleBuffer(buffer) { [weak self] in
-                            Task { @MainActor in
-                                self?.playedFrames += framesInBatch
-                                if let total = self?.totalFrames, total > 0 {
-                                    self?.progress = Double(self?.playedFrames ?? 0) / Double(total)
-                                }
-                            }
-                        }
-
-                        sampleBuffer.removeAll(keepingCapacity: true)
-                        totalBufferedFrames += framesInBatch
-                        frameCount = 0
-
-                        // Start playback after pre-buffering (or on last frame if short)
-                        if !hasStartedPlayback && (totalBufferedFrames >= preBufferFrames || frame.isLast) {
-                            let latency = Date().timeIntervalSince(startTime)
-                            ttsLogger.notice("Pre-buffered \(totalBufferedFrames) frames in \(String(format: "%.0f", latency * 1000))ms, starting playback")
-                            await MainActor.run {
-                                self.loadingMessage = ""
-                                self.state = .playing
-                            }
-                            try engine.start()
-                            playerNode.play()
-                            hasStartedPlayback = true
-                        }
+                        try engine.start()
+                        playerNode.play()
+                        hasStartedPlayback = true
                     }
                 }
 
-                // Schedule any remaining samples
-                if !sampleBuffer.isEmpty {
-                    let buffer = createPCMBuffer(from: sampleBuffer)
-                    playerNode.scheduleBuffer(buffer, completionHandler: nil)
-                }
-
-                // Log overall synthesis performance
-                let synthesisTime = Date().timeIntervalSince(startTime)
-                let totalAudioSeconds = Double(self.totalFrames) * 0.08  // 80ms per frame
-                let overallRtfx = totalAudioSeconds / synthesisTime
-                ttsLogger.notice("Synthesis complete: \(self.totalFrames) frames (\(String(format: "%.1f", totalAudioSeconds))s audio) in \(String(format: "%.1f", synthesisTime))s = \(String(format: "%.2f", overallRtfx))x RTFx")
+                let totalTime = Date().timeIntervalSince(startTime)
+                let totalAudio = Double(cumulativeSamples) / 24000.0
+                ttsLogger.notice("All \(totalChunks) chunks done: \(String(format: "%.1f", totalAudio))s audio in \(String(format: "%.1f", totalTime))s")
 
                 await waitForPlaybackCompletion()
 
                 await MainActor.run {
                     if !self.isStopped {
-                        self.state = .idle
                         self.progress = 1.0
+                        self.state = .idle
+                        print("[TTS] Playback finished naturally, calling onPlaybackFinished: \(self.onPlaybackFinished != nil)")
+                        self.onPlaybackFinished?()
+                    } else {
+                        print("[TTS] Playback ended but isStopped=true, skipping callback")
                     }
                 }
             } catch {
+                print("[TTS synthesis error] \(error)")
                 await MainActor.run {
                     self.state = .error("Synthesis failed: \(error.localizedDescription)")
                 }
             }
         }
     }
+
+    private func synthesizePocketTTS(_ text: String) async throws -> [Float] {
+        guard let mgr = pocketManager else { throw TTSError.notInitialized }
+        let result = try await mgr.synthesizeDetailed(text: text, voice: currentVoice)
+        return result.samples
+    }
+
+    private func synthesizeKokoro(_ text: String) async throws -> [Float] {
+        guard let mgr = kokoroManager else { throw TTSError.notInitialized }
+        let result = try await mgr.synthesizeDetailed(text: text, voice: currentVoice)
+        // Kokoro returns samples per chunk — concatenate all chunk samples
+        return result.chunks.flatMap { $0.samples }
+    }
+
+    private enum TTSError: LocalizedError {
+        case notInitialized
+        var errorDescription: String? { "TTS engine not initialized" }
+    }
+
+    // MARK: - Text Chunking
+
+    func splitIntoChunks(_ text: String) -> [String] {
+        var result: [String] = []
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+
+        // Split on sentence-ending punctuation and clause-separating punctuation
+        var current = ""
+        for char in trimmed {
+            current.append(char)
+            if ".!?,;:".contains(char) {
+                let clause = current.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !clause.isEmpty {
+                    result.append(clause)
+                }
+                current = ""
+            }
+        }
+
+        let remainder = current.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !remainder.isEmpty {
+            result.append(remainder)
+        }
+
+        // Merge very short chunks (< 40 chars) with the next to avoid tiny synthesis calls
+        var merged: [String] = []
+        var accumulator = ""
+        for chunk in result {
+            if accumulator.isEmpty {
+                accumulator = chunk
+            } else {
+                accumulator += " " + chunk
+            }
+            // Only split if accumulator is long enough AND ends with punctuation
+            let lastChar = accumulator.last ?? " "
+            if accumulator.count >= 40 && ".!?,;:".contains(lastChar) {
+                merged.append(accumulator)
+                accumulator = ""
+            }
+        }
+        if !accumulator.isEmpty {
+            if let last = merged.last {
+                merged[merged.count - 1] = last + " " + accumulator
+            } else {
+                merged.append(accumulator)
+            }
+        }
+
+        return merged
+    }
+
+    /// Returns the pause duration in seconds based on the trailing punctuation of a chunk.
+    func pauseDuration(after text: String) -> TimeInterval {
+        guard let last = text.last else { return 0 }
+        switch last {
+        case ".":  return 0.45
+        case "!":  return 0.40
+        case "?":  return 0.50
+        case ",":  return 0.15
+        case ";":  return 0.25
+        case ":":  return 0.30
+        default:   return 0.10
+        }
+    }
+
+    // MARK: - Audio Engine
 
     private func setupAudioEngine() {
         audioEngine = AVAudioEngine()
@@ -262,7 +385,6 @@ final class TTSService {
 
         engine.attach(player)
 
-        // 24kHz mono float format (PocketTTS native output)
         let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
             sampleRate: 24000,
@@ -271,11 +393,15 @@ final class TTSService {
         )!
 
         engine.connect(player, to: engine.mainMixerNode, format: format)
+
+        engine.mainMixerNode.outputVolume = volume
+        engine.mainMixerNode.auAudioUnit.maximumFramesToRender = 4096
+        engine.outputNode.auAudioUnit.maximumFramesToRender = 4096
+
         engine.prepare()
     }
 
     private func createPCMBuffer(from samples: [Float]) -> AVAudioPCMBuffer {
-        // 24kHz mono float format (PocketTTS native output)
         let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
             sampleRate: 24000,
@@ -295,12 +421,12 @@ final class TTSService {
     }
 
     private func waitForPlaybackCompletion() async {
-        guard let playerNode = playerNode else { return }
-
-        while playerNode.isPlaying && !isStopped {
-            try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+        while !lastBufferFinished && !isStopped {
+            try? await Task.sleep(nanoseconds: 100_000_000)
         }
     }
+
+    // MARK: - Playback Controls
 
     func pause() {
         playerNode?.pause()
@@ -323,28 +449,38 @@ final class TTSService {
         playerNode = nil
         audioEngine = nil
 
-        playedFrames = 0
-        totalFrames = 0
+        playedSamples = 0
+        totalSamples = 0
         progress = 0.0
         currentSentence = ""
         currentSentenceIndex = -1
         sentences = []
         loadingMessage = ""
-        isThrottling = false
-        currentRTFx = 0.0
-        // Keep ready state if models are loaded
-        state = manager != nil ? .ready : .idle
+        state = isEngineReady ? .ready : .idle
 
-        // Start idle unload timer to prevent thermal throttling
         startIdleUnloadTimer()
     }
+
+    // MARK: - Voice
+
+    func setVoice(_ voice: String) async {
+        currentVoice = voice
+        switch currentEngine {
+        case .pocketTTS:
+            await pocketManager?.setDefaultVoice(voice)
+        case .kokoro:
+            try? await kokoroManager?.setDefaultVoice(voice)
+        }
+    }
+
+    // MARK: - Lifecycle
 
     private func startIdleUnloadTimer() {
         idleUnloadTask?.cancel()
         idleUnloadTask = Task {
             try? await Task.sleep(nanoseconds: UInt64(idleUnloadDelay * 1_000_000_000))
             guard !Task.isCancelled else { return }
-            ttsLogger.notice("Idle timeout - unloading models to prevent thermal throttling")
+            ttsLogger.notice("Idle timeout - unloading models")
             await unloadModels()
         }
     }
@@ -355,39 +491,21 @@ final class TTSService {
     }
 
     private func unloadModels() async {
-        await manager?.cleanup()
-        manager = nil
+        await pocketManager?.cleanup()
+        pocketManager = nil
+        kokoroManager?.cleanup()
+        kokoroManager = nil
         state = .idle
         ttsLogger.notice("Models unloaded")
-    }
-
-    func setVoice(_ voice: String) async {
-        currentVoice = voice
-        await manager?.setDefaultVoice(voice)
-    }
-
-    func setBatchVersion(_ versionRaw: String) async -> Bool {
-        guard let version = BatchPrefillVersion(rawValue: versionRaw) else {
-            ttsLogger.error("Invalid version: \(versionRaw)")
-            return false
-        }
-        guard let mgr = manager else {
-            ttsLogger.error("Manager not initialized")
-            return false
-        }
-        let success = await mgr.setBatchPrefillVersion(version)
-        if success {
-            batchPrefillVersion = version.displayName
-            ttsLogger.notice("Switched to version: \(version.displayName)")
-        }
-        return success
     }
 
     func cleanup() {
         stop()
         Task {
-            await manager?.cleanup()
+            await pocketManager?.cleanup()
         }
-        manager = nil
+        kokoroManager?.cleanup()
+        pocketManager = nil
+        kokoroManager = nil
     }
 }

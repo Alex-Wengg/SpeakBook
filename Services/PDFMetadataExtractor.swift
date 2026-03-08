@@ -1,6 +1,11 @@
 import Foundation
 import PDFKit
+
+#if os(iOS)
 import UIKit
+#else
+import AppKit
+#endif
 
 enum PDFMetadataExtractor {
     static func extractMetadata(from url: URL) -> (author: String?, coverImage: Data?) {
@@ -19,18 +24,31 @@ enum PDFMetadataExtractor {
                 height: pageRect.height * scale
             )
 
-            let renderer = UIGraphicsImageRenderer(size: scaledSize)
-            let image = renderer.image { context in
-                UIColor.white.setFill()
-                context.fill(CGRect(origin: .zero, size: scaledSize))
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            guard let ctx = CGContext(
+                data: nil,
+                width: Int(scaledSize.width),
+                height: Int(scaledSize.height),
+                bitsPerComponent: 8,
+                bytesPerRow: 0,
+                space: colorSpace,
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else { return (author, nil) }
 
-                context.cgContext.translateBy(x: 0, y: scaledSize.height)
-                context.cgContext.scaleBy(x: scale, y: -scale)
+            ctx.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
+            ctx.fill(CGRect(origin: .zero, size: scaledSize))
+            ctx.translateBy(x: 0, y: scaledSize.height)
+            ctx.scaleBy(x: scale, y: -scale)
+            firstPage.draw(with: .mediaBox, to: ctx)
 
-                firstPage.draw(with: .mediaBox, to: context.cgContext)
+            if let cgImage = ctx.makeImage() {
+                #if os(iOS)
+                coverImage = UIImage(cgImage: cgImage).jpegData(compressionQuality: 0.7)
+                #else
+                let nsImage = NSImage(cgImage: cgImage, size: scaledSize)
+                coverImage = nsImage.jpegData(compressionQuality: 0.7)
+                #endif
             }
-
-            coverImage = image.jpegData(compressionQuality: 0.7)
         }
 
         return (author, coverImage)

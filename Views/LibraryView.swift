@@ -213,8 +213,8 @@ struct BookCardView: View {
     var body: some View {
         VStack(spacing: 8) {
             if let coverData = book.coverImage,
-               let uiImage = UIImage(data: coverData) {
-                Image(uiImage: uiImage)
+               let image = PlatformImage(data: coverData) {
+                Image(platformImage: image)
                     .resizable()
                     .aspectRatio(2/3, contentMode: .fill)
                     .frame(height: 200)

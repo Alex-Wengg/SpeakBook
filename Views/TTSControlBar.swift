@@ -4,8 +4,8 @@ struct TTSControlBar: View {
     @Bindable var ttsService: TTSService
     let getText: () -> String?
 
+    @State private var showEnginePicker = false
     @State private var showVoicePicker = false
-    @State private var showBatchInfo = false
     @State private var showTextPicker = false
 
     var body: some View {
@@ -27,6 +27,24 @@ struct TTSControlBar: View {
             }
 
             HStack(spacing: 16) {
+                // Engine picker button
+                Button {
+                    showEnginePicker = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "cpu")
+                            .font(.title3)
+                        Text(ttsService.currentEngine.rawValue)
+                            .font(.caption)
+                    }
+                }
+                .popover(isPresented: $showEnginePicker) {
+                    EnginePickerView(
+                        ttsService: ttsService,
+                        isPresented: $showEnginePicker
+                    )
+                }
+
                 // Voice picker button
                 Button {
                     showVoicePicker = true
@@ -38,25 +56,6 @@ struct TTSControlBar: View {
                     VoicePickerView(
                         ttsService: ttsService,
                         isPresented: $showVoicePicker
-                    )
-                }
-
-                // Batch prefill version button
-                Button {
-                    showBatchInfo = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "bolt.fill")
-                            .foregroundStyle(batchVersionColor)
-                        Text(batchVersionShort)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    }
-                }
-                .popover(isPresented: $showBatchInfo) {
-                    BatchPrefillInfoView(
-                        ttsService: ttsService,
-                        isPresented: $showBatchInfo
                     )
                 }
 
@@ -112,18 +111,6 @@ struct TTSControlBar: View {
 
                 Spacer()
 
-                // Throttling warning
-                if ttsService.isThrottling {
-                    HStack(spacing: 4) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
-                        Text(String(format: "%.1fx", ttsService.currentRTFx))
-                            .foregroundStyle(.orange)
-                    }
-                    .font(.caption)
-                    .help("Generation slower than real-time - audio may stutter")
-                }
-
                 // Progress indicator
                 if ttsService.isPlaying || ttsService.state == .paused {
                     Text("\(Int(ttsService.progress * 100))%")
@@ -140,29 +127,21 @@ struct TTSControlBar: View {
                     .tint(.accentColor)
                     .padding(.horizontal)
             }
+
+            // Volume slider
+            HStack(spacing: 8) {
+                Image(systemName: "speaker.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Slider(value: $ttsService.volume, in: 0...1)
+                Image(systemName: "speaker.wave.3.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
         }
         .padding(.vertical, 8)
         .background(.bar)
-    }
-
-    private var batchVersionColor: Color {
-        if ttsService.batchPrefillVersion.contains("v3") {
-            return .green
-        } else if ttsService.batchPrefillVersion.contains("v2") {
-            return .yellow
-        } else {
-            return .red
-        }
-    }
-
-    private var batchVersionShort: String {
-        if ttsService.batchPrefillVersion.contains("v3") {
-            return "v3"
-        } else if ttsService.batchPrefillVersion.contains("v2") {
-            return "v2"
-        } else {
-            return "v1"
-        }
     }
 
     private func handlePlayPause() async {
@@ -208,7 +187,9 @@ struct VoicePickerView: View {
                 .foregroundStyle(.primary)
             }
             .navigationTitle("Select Voice")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") {
@@ -238,6 +219,60 @@ struct VoicePickerView: View {
         }
 
         return gender.isEmpty ? name : "\(name) (\(gender))"
+    }
+}
+
+struct EnginePickerView: View {
+    @Bindable var ttsService: TTSService
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        NavigationStack {
+            List(TTSService.TTSEngine.allCases, id: \.self) { engine in
+                Button {
+                    Task {
+                        await ttsService.setEngine(engine)
+                        isPresented = false
+                    }
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(engine.rawValue)
+                            Text(engineDescription(engine))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        if engine == ttsService.currentEngine {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(Color.accentColor)
+                        }
+                    }
+                }
+                .foregroundStyle(.primary)
+            }
+            .navigationTitle("TTS Engine")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        isPresented = false
+                    }
+                }
+            }
+        }
+        .frame(minWidth: 250, minHeight: 200)
+    }
+
+    private func engineDescription(_ engine: TTSService.TTSEngine) -> String {
+        switch engine {
+        case .pocketTTS: return "3 voices, voice cloning"
+        case .kokoro: return "40+ voices, phoneme-based"
+        }
     }
 }
 
@@ -291,7 +326,9 @@ struct TextStartPickerView: View {
             }
             .searchable(text: $searchText, prompt: "Find text...")
             .navigationTitle("Start Reading From")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -348,96 +385,5 @@ struct TextStartPickerView: View {
         Task {
             await ttsService.speak(text: remainingText)
         }
-    }
-}
-
-struct BatchPrefillInfoView: View {
-    @Bindable var ttsService: TTSService
-    @Binding var isPresented: Bool
-
-    private let versions: [(id: String, rawValue: String, name: String, tokens: String, speed: String, color: Color)] = [
-        ("v3", "v3 (100 text tokens)", "Batch v3", "100 text tokens", "Fastest", .green),
-        ("v2", "v2 (50 text tokens)", "Batch v2", "50 text tokens", "Fast", .yellow),
-        ("v1", "v1 (token-by-token)", "Token-by-token", "50 text tokens", "Slow", .red),
-    ]
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    ForEach(versions, id: \.id) { version in
-                        Button {
-                            Task {
-                                _ = await ttsService.setBatchVersion(version.rawValue)
-                            }
-                        } label: {
-                            HStack(spacing: 12) {
-                                // Status indicator
-                                Image(systemName: isCurrentVersion(version.id) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(isCurrentVersion(version.id) ? version.color : .secondary)
-                                    .font(.title3)
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    HStack {
-                                        Text(version.name)
-                                            .fontWeight(isCurrentVersion(version.id) ? .semibold : .regular)
-
-                                        if isCurrentVersion(version.id) {
-                                            Text("Active")
-                                                .font(.caption2)
-                                                .padding(.horizontal, 6)
-                                                .padding(.vertical, 2)
-                                                .background(version.color.opacity(0.2))
-                                                .foregroundStyle(version.color)
-                                                .clipShape(Capsule())
-                                        }
-                                    }
-
-                                    Text("\(version.tokens) • \(version.speed)")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-
-                                Spacer()
-
-                                // Show if version is available
-                                if !isVersionAvailable(version.rawValue) {
-                                    Text("Not available")
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            .padding(.vertical, 4)
-                        }
-                        .foregroundStyle(.primary)
-                        .disabled(!isVersionAvailable(version.rawValue))
-                        .opacity(isVersionAvailable(version.rawValue) ? 1.0 : 0.5)
-                    }
-                } header: {
-                    Text("Batch Prefill Mode")
-                } footer: {
-                    Text("Batch prefill processes multiple tokens at once during the conditioning step, dramatically reducing latency. v3 handles longer sentences per chunk.")
-                        .font(.caption2)
-                }
-            }
-            .navigationTitle("TTS Engine")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") {
-                        isPresented = false
-                    }
-                }
-            }
-        }
-        .frame(minWidth: 300, minHeight: 350)
-    }
-
-    private func isCurrentVersion(_ versionId: String) -> Bool {
-        ttsService.batchPrefillVersion.lowercased().contains(versionId)
-    }
-
-    private func isVersionAvailable(_ rawValue: String) -> Bool {
-        ttsService.availableVersions.contains(rawValue)
     }
 }

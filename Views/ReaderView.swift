@@ -15,7 +15,9 @@ struct ReaderView: View {
             }
         }
         .navigationTitle(book.title)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .onAppear {
             book.lastOpened = Date()
         }

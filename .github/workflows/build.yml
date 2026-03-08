@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  swiftlint:
+    name: SwiftLint
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Lint
+        run: swiftlint lint --reporter github-actions-logging
+
+  build:
+    name: Build (${{ matrix.platform }})
+    runs-on: macos-15
+    strategy:
+      matrix:
+        include:
+          - platform: macOS
+            destination: platform=macOS
+          - platform: iOS
+            destination: platform=iOS Simulator,name=iPhone 16
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Point FluidAudio to git URL
+        run: |
+          sed -i '' '/^  FluidAudio:/{n;s|path: ../FluidAudio|url: https://github.com/FluidInference/FluidAudio.git\n    branch: main|;}' project.yml
+          echo "--- project.yml packages section ---"
+          grep -A3 'FluidAudio:' project.yml
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project SpeakBook.xcodeproj \
+            -scheme SpeakBook
+
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SpeakBook.xcodeproj \
+            -scheme SpeakBook \
+            -destination '${{ matrix.destination }}' \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 \
+            | tee build.log
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ matrix.platform }}
+          path: build.log

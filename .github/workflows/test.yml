@@ -1,0 +1,52 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Point FluidAudio to git URL
+        run: |
+          sed -i '' '/^  FluidAudio:/{n;s|path: ../FluidAudio|url: https://github.com/FluidInference/FluidAudio.git\n    branch: main|;}' project.yml
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project SpeakBook.xcodeproj \
+            -scheme SpeakBook
+
+      - name: Run tests
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SpeakBook.xcodeproj \
+            -scheme SpeakBook \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            test 2>&1 \
+            | tee test.log
+
+      - name: Upload test log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-log
+          path: test.log
