@@ -146,31 +146,7 @@ struct PDFReaderView: View {
             return nil
         }
         guard let raw = page.string else { return nil }
-        return cleanPageText(raw)
-    }
-
-    /// Strip page numbers, footnote markers, headers/footers and other noise from extracted PDF text.
-    private func cleanPageText(_ text: String) -> String? {
-        let lines = text.components(separatedBy: .newlines)
-        var cleaned: [String] = []
-
-        for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-
-            // Skip empty lines
-            if trimmed.isEmpty { continue }
-
-            // Skip standalone numbers (page numbers, footnote numbers)
-            if trimmed.allSatisfy({ $0.isNumber || $0 == "." || $0 == "-" || $0 == " " }) { continue }
-
-            // Skip very short lines that look like headers/footers (e.g. "Chapter 3", "| 42")
-            if trimmed.count < 6 { continue }
-
-            cleaned.append(trimmed)
-        }
-
-        let result = cleaned.joined(separator: " ")
-        return result.isEmpty ? nil : result
+        return PDFTextCleaner.clean(raw)
     }
 
     private var pageIndicator: some View {
@@ -349,6 +325,34 @@ struct PDFKitView: NSViewRepresentable {
     }
 }
 #endif
+
+// MARK: - PDF Text Cleaning
+
+enum PDFTextCleaner {
+    /// Strip page numbers, footnote markers, headers/footers and other noise from extracted PDF text.
+    static func clean(_ text: String) -> String? {
+        let lines = text.components(separatedBy: .newlines)
+        var cleaned: [String] = []
+
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+
+            // Skip empty lines
+            if trimmed.isEmpty { continue }
+
+            // Skip standalone numbers (page numbers, footnote numbers)
+            if trimmed.allSatisfy({ $0.isNumber || $0 == "." || $0 == "-" || $0 == " " }) { continue }
+
+            // Skip very short lines that look like headers/footers (e.g. "Chapter 3", "| 42")
+            if trimmed.count < 6 { continue }
+
+            cleaned.append(trimmed)
+        }
+
+        let result = cleaned.joined(separator: " ")
+        return result.isEmpty ? nil : result
+    }
+}
 
 // MARK: - Shared Highlight Logic
 

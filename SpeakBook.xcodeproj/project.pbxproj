@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1B5AC6FF6639C3ED6AC28D78 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D026E56A5D7E2D0982F86AE /* Book.swift */; };
+		1E9AF767DF656304A63EF994 /* TTSServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E849F4292B07F7D4BCB61FC /* TTSServiceTests.swift */; };
 		2706FE0D64A606BD43F65608 /* pre-applypatch.sample in Resources */ = {isa = PBXBuildFile; fileRef = 6F58A93100326D0295550D2E /* pre-applypatch.sample */; };
 		29473232EAE1FABA46EF7251 /* pre-merge-commit.sample in Resources */ = {isa = PBXBuildFile; fileRef = E615CF3D3B583D340151A42B /* pre-merge-commit.sample */; };
 		2C4F3E2F19BB2FF98709E888 /* test_tts_accuracy.txt in Resources */ = {isa = PBXBuildFile; fileRef = 195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */; };
@@ -25,6 +26,8 @@
 		756052856EB8210D70193752 /* PlatformTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6C8CCD4A40561C27169BE0 /* PlatformTypes.swift */; };
 		7651DEC31FCB4ECA58589A82 /* commit-msg.sample in Resources */ = {isa = PBXBuildFile; fileRef = B688103A2F2ACA27D4E098B2 /* commit-msg.sample */; };
 		7BD81B99DB790DA7FAABE28A /* install.sh in Resources */ = {isa = PBXBuildFile; fileRef = D0431A4D1427F0853FBAB792 /* install.sh */; };
+		7D4A50A941668E646CEE4D7E /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 4EBD256690D00D781E182008 /* .swiftlint.yml */; };
+		7D725EC172EAD9DB3840446C /* PDFTextCleanerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DCDFBACC66C42864D43898 /* PDFTextCleanerTests.swift */; };
 		83359A6254979F59AA7859AD /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx in Resources */ = {isa = PBXBuildFile; fileRef = 03E574C83471F3C0CE60C55A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx */; };
 		869146C3D7C39C6F00305222 /* TTSControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DDDEEE3EEADEF1982AF751 /* TTSControlBar.swift */; };
 		AA11E42633820E966A95F927 /* download_models.sh in Resources */ = {isa = PBXBuildFile; fileRef = AB8DD17A82BEF1338324EEBC /* download_models.sh */; };
@@ -33,6 +36,7 @@
 		BCF462C7B424F9D3AF87EDB6 /* pre-receive.sample in Resources */ = {isa = PBXBuildFile; fileRef = E48A72E95F489795F40FDABA /* pre-receive.sample */; };
 		C2805B4FF9A7125C49A71583 /* PDFMetadataExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488B14A8211D5D3015A891D6 /* PDFMetadataExtractor.swift */; };
 		C7578003128253B20A097BA8 /* pre-push.sample in Resources */ = {isa = PBXBuildFile; fileRef = BB09B2FED360D851E639DEB3 /* pre-push.sample */; };
+		C9490C0043021D17AD4C5413 /* build.yml in Resources */ = {isa = PBXBuildFile; fileRef = 84C8262EB46A0543AD0F1700 /* build.yml */; };
 		D36543F5F7DE53875D0F67DE /* sendemail-validate.sample in Resources */ = {isa = PBXBuildFile; fileRef = 568AE9D5C84D076A836EDE9C /* sendemail-validate.sample */; };
 		DF130524F6F1F33F848020A6 /* update.sample in Resources */ = {isa = PBXBuildFile; fileRef = A48117861C53FC336F70B8F0 /* update.sample */; };
 		E5C0200BCF22860D9E5C6342 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3635215D31ED3024EC0DFF /* TTSService.swift */; };
@@ -42,55 +46,106 @@
 		FC5042945E462DFFC2B79B8B /* pre-commit.sample in Resources */ = {isa = PBXBuildFile; fileRef = FAB0B46F8AFD73E535A0C99D /* pre-commit.sample */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4A49A337FE8A31044B92617F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 002B7E3D2A101FD1BA69C4F7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CD220F5701AE2B3BD662C319;
+			remoteInfo = SpeakBook;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		01BA089CE2F6933A8D5A08BF /* 05dfe56e63bf8bf8209352e6811b681c5e3e92 */ = {isa = PBXFileReference; path = 05dfe56e63bf8bf8209352e6811b681c5e3e92; sourceTree = "<group>"; };
 		03E574C83471F3C0CE60C55A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx */ = {isa = PBXFileReference; path = "pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.idx"; sourceTree = "<group>"; };
+		0B2113D8A510D82A9E83FFDF /* 4d5e8d12b66cc2c44069d42d19141889775fde */ = {isa = PBXFileReference; path = 4d5e8d12b66cc2c44069d42d19141889775fde; sourceTree = "<group>"; };
 		195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = test_tts_accuracy.txt; sourceTree = "<group>"; };
 		1C75F4409BF1362AD14E2516 /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.rev */ = {isa = PBXFileReference; path = "pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.rev"; sourceTree = "<group>"; };
+		1DF0DEE5133C89DBEEFBC583 /* 7988215194e75a4a322c78f863f1373948f1f9 */ = {isa = PBXFileReference; path = 7988215194e75a4a322c78f863f1373948f1f9; sourceTree = "<group>"; };
+		1E849F4292B07F7D4BCB61FC /* TTSServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSServiceTests.swift; sourceTree = "<group>"; };
+		1F87AE9F33C746FCBDBA0205 /* 6b826df7c6f2f4914a53dc9ca97dae43a1bd44 */ = {isa = PBXFileReference; path = 6b826df7c6f2f4914a53dc9ca97dae43a1bd44; sourceTree = "<group>"; };
 		1F8B0AF1983197D55337CE8C /* .gitignore */ = {isa = PBXFileReference; path = .gitignore; sourceTree = "<group>"; };
+		24C9FB12C6BD3C42C97A286F /* 2e540f10e86568aea13fbf9c6820a583b41cac */ = {isa = PBXFileReference; path = 2e540f10e86568aea13fbf9c6820a583b41cac; sourceTree = "<group>"; };
 		2506F95D34BB13A27498D2C5 /* commit-graph */ = {isa = PBXFileReference; path = "commit-graph"; sourceTree = "<group>"; };
 		262C2799C76312E249D4FBA9 /* applypatch-msg.sample */ = {isa = PBXFileReference; path = "applypatch-msg.sample"; sourceTree = "<group>"; };
+		27DCDFBACC66C42864D43898 /* PDFTextCleanerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFTextCleanerTests.swift; sourceTree = "<group>"; };
+		2A0CC879DC3CAB00D54ADF38 /* 1a93b10a78eceab0679d0f91ec74a691ff20e2 */ = {isa = PBXFileReference; path = 1a93b10a78eceab0679d0f91ec74a691ff20e2; sourceTree = "<group>"; };
+		2A916AA42768AEB1FF255795 /* f0ccfd26a568e48bccaadde985a3d8bf83f491 */ = {isa = PBXFileReference; path = f0ccfd26a568e48bccaadde985a3d8bf83f491; sourceTree = "<group>"; };
 		3A4AE2BF40D7ED2C02DC19C1 /* exclude */ = {isa = PBXFileReference; path = exclude; sourceTree = "<group>"; };
 		3A99DFFDA89C30216106428B /* fsmonitor-watchman.sample */ = {isa = PBXFileReference; path = "fsmonitor-watchman.sample"; sourceTree = "<group>"; };
+		3CEAD61F4424A9C0B613DF6F /* c6ddc40547aacfa9bf8f485e292c6da8d23eb8 */ = {isa = PBXFileReference; path = c6ddc40547aacfa9bf8f485e292c6da8d23eb8; sourceTree = "<group>"; };
+		3D701887A1415D2BC5030EA3 /* 5deb0b1e116df76939f41f29f06fa5ef1cce44 */ = {isa = PBXFileReference; path = 5deb0b1e116df76939f41f29f06fa5ef1cce44; sourceTree = "<group>"; };
 		3E3635215D31ED3024EC0DFF /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		427CAD6663461779CA16FC48 /* SpeakBook.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SpeakBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		44F82ED5460DC5FE5401C343 /* bed1a44bf8696d4437b94f87fe2d720127ffef */ = {isa = PBXFileReference; path = bed1a44bf8696d4437b94f87fe2d720127ffef; sourceTree = "<group>"; };
+		4624E4A3301E331D75E7319D /* 8fe317fd106ed7b0794258f5593f36e2448a8a */ = {isa = PBXFileReference; path = 8fe317fd106ed7b0794258f5593f36e2448a8a; sourceTree = "<group>"; };
 		488B14A8211D5D3015A891D6 /* PDFMetadataExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFMetadataExtractor.swift; sourceTree = "<group>"; };
+		4EBD256690D00D781E182008 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		51D178A6E8F964832086F392 /* EPubParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubParser.swift; sourceTree = "<group>"; };
 		5223486E3A99C420AB69D128 /* EPubReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubReaderView.swift; sourceTree = "<group>"; };
+		53B5CD7FFA7B317EFC1DB13F /* 27d9a90f1d63d7f42f4148abfce2e11e09d57b */ = {isa = PBXFileReference; path = 27d9a90f1d63d7f42f4148abfce2e11e09d57b; sourceTree = "<group>"; };
 		53BF111E53BCF31AF0DB517E /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		567C8F27FEFA4626DC3F62E5 /* a7efecb4e61471d4df6bcffbcde4fd5ed80061 */ = {isa = PBXFileReference; path = a7efecb4e61471d4df6bcffbcde4fd5ed80061; sourceTree = "<group>"; };
 		568AE9D5C84D076A836EDE9C /* sendemail-validate.sample */ = {isa = PBXFileReference; path = "sendemail-validate.sample"; sourceTree = "<group>"; };
+		5C2172547298B20A65709887 /* a756469c5f9e91787bd3862f7723fd183cfaf2 */ = {isa = PBXFileReference; path = a756469c5f9e91787bd3862f7723fd183cfaf2; sourceTree = "<group>"; };
 		5D026E56A5D7E2D0982F86AE /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		5D438BF2BB8652A52830F32A /* pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.pack */ = {isa = PBXFileReference; path = "pack-5284f08b1962b8f54d43c19c47ebe1dad4770479.pack"; sourceTree = "<group>"; };
+		5FF0B3E5DDDC7BCCC6ED46E7 /* 876d6acc63f335bd00c7e93ae7beccfbe5959e */ = {isa = PBXFileReference; path = 876d6acc63f335bd00c7e93ae7beccfbe5959e; sourceTree = "<group>"; };
+		61F7DC06C24E8C4E7B75ED80 /* 3095ba9f1c89771accfa40488b00d0326ff403 */ = {isa = PBXFileReference; path = 3095ba9f1c89771accfa40488b00d0326ff403; sourceTree = "<group>"; };
+		6245FC77F5C9301ECFA63C76 /* e1ed2e705835d3efe3bfa076c1e2a73857db55 */ = {isa = PBXFileReference; path = e1ed2e705835d3efe3bfa076c1e2a73857db55; sourceTree = "<group>"; };
 		63F4A17A27E6585A8C95AE94 /* index */ = {isa = PBXFileReference; path = index; sourceTree = "<group>"; };
 		69A9D4323D987E94DDD754E8 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		6A2D6A59630C72930ABA5F34 /* packed-refs */ = {isa = PBXFileReference; path = "packed-refs"; sourceTree = "<group>"; };
 		6F58A93100326D0295550D2E /* pre-applypatch.sample */ = {isa = PBXFileReference; path = "pre-applypatch.sample"; sourceTree = "<group>"; };
 		74D49178922B1166E048ADDD /* HEAD */ = {isa = PBXFileReference; path = HEAD; sourceTree = "<group>"; };
 		75A096DA473C799C625D0345 /* main */ = {isa = PBXFileReference; path = main; sourceTree = "<group>"; };
+		8229069263C570B6A402F1B4 /* tts-enhancements */ = {isa = PBXFileReference; path = "tts-enhancements"; sourceTree = "<group>"; };
+		8405D6893F55EE37776C1A5A /* a55e5b6175625552f7be66c5fe204b5d0ec6a6 */ = {isa = PBXFileReference; path = a55e5b6175625552f7be66c5fe204b5d0ec6a6; sourceTree = "<group>"; };
+		84C8262EB46A0543AD0F1700 /* build.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = build.yml; sourceTree = "<group>"; };
 		868E2097477CFBFB34717EE6 /* FluidAudio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FluidAudio; path = ../FluidAudio; sourceTree = SOURCE_ROOT; };
+		87F010840C85759FEDF864D4 /* 219ff3e114faf816f4d1e937c4f8d7ce351a95 */ = {isa = PBXFileReference; path = 219ff3e114faf816f4d1e937c4f8d7ce351a95; sourceTree = "<group>"; };
 		880A98506C4C4321FD822EDC /* post-update.sample */ = {isa = PBXFileReference; path = "post-update.sample"; sourceTree = "<group>"; };
+		8D4D3E2DBCFBA44100A5204F /* 446cfbcfe81d4d28a7b3ce5079f6bc9afa030c */ = {isa = PBXFileReference; path = 446cfbcfe81d4d28a7b3ce5079f6bc9afa030c; sourceTree = "<group>"; };
+		90DAF5340319B141F8358453 /* 616b644a96b83d5fbc3c371b7f1010784ca9e3 */ = {isa = PBXFileReference; path = 616b644a96b83d5fbc3c371b7f1010784ca9e3; sourceTree = "<group>"; };
 		973761B631042C1CA928B412 /* pre-rebase.sample */ = {isa = PBXFileReference; path = "pre-rebase.sample"; sourceTree = "<group>"; };
+		A0042E3A92C68718ED05A48A /* 874197c5969f6397ef82eee24211fb60f14230 */ = {isa = PBXFileReference; path = 874197c5969f6397ef82eee24211fb60f14230; sourceTree = "<group>"; };
 		A48117861C53FC336F70B8F0 /* update.sample */ = {isa = PBXFileReference; path = update.sample; sourceTree = "<group>"; };
+		A497D037EF99551ADF15AF85 /* tts-enhancements */ = {isa = PBXFileReference; path = "tts-enhancements"; sourceTree = "<group>"; };
 		A62AC737E2F1D84B460C6924 /* description */ = {isa = PBXFileReference; path = description; sourceTree = "<group>"; };
 		AB6C8CCD4A40561C27169BE0 /* PlatformTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformTypes.swift; sourceTree = "<group>"; };
 		AB8DD17A82BEF1338324EEBC /* download_models.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = download_models.sh; sourceTree = "<group>"; };
+		AD8A405B02D5C50BCD7958F5 /* 7548d153c7753111c3d06b7a71ffd8b57a76b5 */ = {isa = PBXFileReference; path = 7548d153c7753111c3d06b7a71ffd8b57a76b5; sourceTree = "<group>"; };
+		B22D842630FE5618C067CFDD /* 1dd3a27ac39d5360d9d71eeb0ea54ee751ebc0 */ = {isa = PBXFileReference; path = 1dd3a27ac39d5360d9d71eeb0ea54ee751ebc0; sourceTree = "<group>"; };
+		B5058860147A81DD282B1EBF /* SpeakBookTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SpeakBookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B688103A2F2ACA27D4E098B2 /* commit-msg.sample */ = {isa = PBXFileReference; path = "commit-msg.sample"; sourceTree = "<group>"; };
+		B8143B4901B47FFC2F7521AF /* 962ce8762e7dc2fc12c4bc2d1064a846655de8 */ = {isa = PBXFileReference; path = 962ce8762e7dc2fc12c4bc2d1064a846655de8; sourceTree = "<group>"; };
 		BB09B2FED360D851E639DEB3 /* pre-push.sample */ = {isa = PBXFileReference; path = "pre-push.sample"; sourceTree = "<group>"; };
+		BD18AE0EBECCC46B6F1A0F95 /* 66a193df60a311fdb038b794c94c7e9afc25e3 */ = {isa = PBXFileReference; path = 66a193df60a311fdb038b794c94c7e9afc25e3; sourceTree = "<group>"; };
 		C38BCAC7A191BEB5028C1983 /* COMMIT_EDITMSG */ = {isa = PBXFileReference; path = COMMIT_EDITMSG; sourceTree = "<group>"; };
 		C46B1EC98D3BFB1365312BB3 /* audioReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = audioReaderApp.swift; sourceTree = "<group>"; };
 		C6E5BBD0C03EF2A21F41A569 /* FileTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypes.swift; sourceTree = "<group>"; };
 		CBD17B1D20F18E685139D353 /* PDFReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReaderView.swift; sourceTree = "<group>"; };
 		CBEF7EBA8A8A36DF79B2F233 /* packs */ = {isa = PBXFileReference; path = packs; sourceTree = "<group>"; };
 		D0431A4D1427F0853FBAB792 /* install.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
+		D3477CDBC62B267B231B4EA9 /* 2d436774526abe94761e7a693557ab505da583 */ = {isa = PBXFileReference; path = 2d436774526abe94761e7a693557ab505da583; sourceTree = "<group>"; };
 		D3F8F3EEE1AFCD3E7CDC8CA0 /* push-to-checkout.sample */ = {isa = PBXFileReference; path = "push-to-checkout.sample"; sourceTree = "<group>"; };
 		D49E9ACF34A98D563A303165 /* main */ = {isa = PBXFileReference; path = main; sourceTree = "<group>"; };
 		D5DDDEEE3EEADEF1982AF751 /* TTSControlBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSControlBar.swift; sourceTree = "<group>"; };
 		D8C19F48007C62BE32F0BCF6 /* prepare-commit-msg.sample */ = {isa = PBXFileReference; path = "prepare-commit-msg.sample"; sourceTree = "<group>"; };
+		D95F073BADC9C65C358AB529 /* a3dfb1735bcb2cf1c47a1f18915c41fe8a0bee */ = {isa = PBXFileReference; path = a3dfb1735bcb2cf1c47a1f18915c41fe8a0bee; sourceTree = "<group>"; };
+		D9664D4E50FEB63B81399264 /* bd40fa4fa592c640f8dd1b52b0c4b9b5be2f1f */ = {isa = PBXFileReference; path = bd40fa4fa592c640f8dd1b52b0c4b9b5be2f1f; sourceTree = "<group>"; };
 		DA0CEAF8D8E49ACBE5BB67A3 /* HEAD */ = {isa = PBXFileReference; path = HEAD; sourceTree = "<group>"; };
+		DEBEF4F8F758E85B84CAA773 /* 624157d06de09d35650fc1104988d2536cad31 */ = {isa = PBXFileReference; path = 624157d06de09d35650fc1104988d2536cad31; sourceTree = "<group>"; };
 		E47468036B9A506B7C2399D4 /* refs */ = {isa = PBXFileReference; path = refs; sourceTree = "<group>"; };
 		E48A72E95F489795F40FDABA /* pre-receive.sample */ = {isa = PBXFileReference; path = "pre-receive.sample"; sourceTree = "<group>"; };
 		E615CF3D3B583D340151A42B /* pre-merge-commit.sample */ = {isa = PBXFileReference; path = "pre-merge-commit.sample"; sourceTree = "<group>"; };
+		EA81AF02846A3E17F9BB5E59 /* e9b2dc43061098dff12d5408400a58f0bb94c7 */ = {isa = PBXFileReference; path = e9b2dc43061098dff12d5408400a58f0bb94c7; sourceTree = "<group>"; };
 		F05A320460C598FDB7A6F18E /* main */ = {isa = PBXFileReference; path = main; sourceTree = "<group>"; };
+		F4CD8E0CF2325301E122C030 /* tts-enhancements */ = {isa = PBXFileReference; path = "tts-enhancements"; sourceTree = "<group>"; };
+		F5E3DDB40DAE0DD9E83DCC1B /* 62c709446938c3f10d53656ce0534fa0345d4b */ = {isa = PBXFileReference; path = 62c709446938c3f10d53656ce0534fa0345d4b; sourceTree = "<group>"; };
 		F906AFC01BE29CB678497592 /* config */ = {isa = PBXFileReference; path = config; sourceTree = "<group>"; };
+		F9F2EBAFFFA84A0B0E7A1ED4 /* tts-enhancements */ = {isa = PBXFileReference; path = "tts-enhancements"; sourceTree = "<group>"; };
 		FAB0B46F8AFD73E535A0C99D /* pre-commit.sample */ = {isa = PBXFileReference; path = "pre-commit.sample"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,6 +161,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		08B8DA2539196A9979049F49 /* dc */ = {
+			isa = PBXGroup;
+			children = (
+				3D701887A1415D2BC5030EA3 /* 5deb0b1e116df76939f41f29f06fa5ef1cce44 */,
+			);
+			path = dc;
+			sourceTree = "<group>";
+		};
+		0DE9CE4D0FE1DEFF0A5CAC12 /* feature */ = {
+			isa = PBXGroup;
+			children = (
+				8229069263C570B6A402F1B4 /* tts-enhancements */,
+			);
+			path = feature;
+			sourceTree = "<group>";
+		};
+		117044351284470500F445E0 /* 61 */ = {
+			isa = PBXGroup;
+			children = (
+				4624E4A3301E331D75E7319D /* 8fe317fd106ed7b0794258f5593f36e2448a8a */,
+			);
+			path = 61;
+			sourceTree = "<group>";
+		};
 		19AF5A88A8ECFF09B97FDC41 /* hooks */ = {
 			isa = PBXGroup;
 			children = (
@@ -131,16 +210,66 @@
 			isa = PBXGroup;
 			children = (
 				F05A320460C598FDB7A6F18E /* main */,
+				5C8EFC014272B3CF987FB39F /* feature */,
 			);
 			path = heads;
+			sourceTree = "<group>";
+		};
+		25458507E2C2E72BA2CE00BC /* 57 */ = {
+			isa = PBXGroup;
+			children = (
+				AD8A405B02D5C50BCD7958F5 /* 7548d153c7753111c3d06b7a71ffd8b57a76b5 */,
+			);
+			path = 57;
+			sourceTree = "<group>";
+		};
+		267126867D7A8BACD2302434 /* bf */ = {
+			isa = PBXGroup;
+			children = (
+				0B2113D8A510D82A9E83FFDF /* 4d5e8d12b66cc2c44069d42d19141889775fde */,
+			);
+			path = bf;
+			sourceTree = "<group>";
+		};
+		277DEA9E4C9035C9EF4EE5DD /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				8D4D3E2DBCFBA44100A5204F /* 446cfbcfe81d4d28a7b3ce5079f6bc9afa030c */,
+			);
+			path = cf;
 			sourceTree = "<group>";
 		};
 		2C302B45B3625AA5822866C5 /* refs */ = {
 			isa = PBXGroup;
 			children = (
+				D111C149688ADACCE3E5BA33 /* heads */,
 				635D222A1FB7F1300C66C8B9 /* remotes */,
 			);
 			path = refs;
+			sourceTree = "<group>";
+		};
+		329001E4443A20644F8CE5EE /* 7e */ = {
+			isa = PBXGroup;
+			children = (
+				F5E3DDB40DAE0DD9E83DCC1B /* 62c709446938c3f10d53656ce0534fa0345d4b */,
+			);
+			path = 7e;
+			sourceTree = "<group>";
+		};
+		387FF1922DFD243AC9A1E156 /* 63 */ = {
+			isa = PBXGroup;
+			children = (
+				1F87AE9F33C746FCBDBA0205 /* 6b826df7c6f2f4914a53dc9ca97dae43a1bd44 */,
+			);
+			path = 63;
+			sourceTree = "<group>";
+		};
+		3A85215EC4C56117B0FDEF79 /* a1 */ = {
+			isa = PBXGroup;
+			children = (
+				6245FC77F5C9301ECFA63C76 /* e1ed2e705835d3efe3bfa076c1e2a73857db55 */,
+			);
+			path = a1;
 			sourceTree = "<group>";
 		};
 		3F6B8B80353AC8D8E1FE9175 /* pack */ = {
@@ -161,15 +290,49 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		4671C8C34ED41AF737ACF268 /* 5d */ = {
+			isa = PBXGroup;
+			children = (
+				3CEAD61F4424A9C0B613DF6F /* c6ddc40547aacfa9bf8f485e292c6da8d23eb8 */,
+			);
+			path = 5d;
+			sourceTree = "<group>";
+		};
+		4794A39200146B4463D1EF48 /* cc */ = {
+			isa = PBXGroup;
+			children = (
+				D3477CDBC62B267B231B4EA9 /* 2d436774526abe94761e7a693557ab505da583 */,
+			);
+			path = cc;
+			sourceTree = "<group>";
+		};
+		4A1F2C618BD3B5F9B44C3756 /* 68 */ = {
+			isa = PBXGroup;
+			children = (
+				87F010840C85759FEDF864D4 /* 219ff3e114faf816f4d1e937c4f8d7ce351a95 */,
+			);
+			path = 68;
+			sourceTree = "<group>";
+		};
+		4AA7C5E527D2610FAB6F3CBC /* .github */ = {
+			isa = PBXGroup;
+			children = (
+				8F0273E059467A6D38B2454E /* workflows */,
+			);
+			path = .github;
+			sourceTree = "<group>";
+		};
 		4DE0F42184FA3D190E0C1E0C /* SpeakBook */ = {
 			isa = PBXGroup;
 			children = (
 				1F8B0AF1983197D55337CE8C /* .gitignore */,
+				4EBD256690D00D781E182008 /* .swiftlint.yml */,
 				C46B1EC98D3BFB1365312BB3 /* audioReaderApp.swift */,
 				AB8DD17A82BEF1338324EEBC /* download_models.sh */,
 				D0431A4D1427F0853FBAB792 /* install.sh */,
 				195433AED3B5DA930FBC3442 /* test_tts_accuracy.txt */,
 				F66CB43BB854C7CFF85EA342 /* .git */,
+				4AA7C5E527D2610FAB6F3CBC /* .github */,
 				45220B900744FFC91837BE71 /* Models */,
 				6B9C4F7EB347FBB04F41662E /* Services */,
 				94E17895AE2DFB09668F6899 /* Utilities */,
@@ -177,6 +340,22 @@
 			);
 			name = SpeakBook;
 			path = .;
+			sourceTree = "<group>";
+		};
+		5BD70681ACB08CAFAB08AB1B /* f9 */ = {
+			isa = PBXGroup;
+			children = (
+				2A0CC879DC3CAB00D54ADF38 /* 1a93b10a78eceab0679d0f91ec74a691ff20e2 */,
+			);
+			path = f9;
+			sourceTree = "<group>";
+		};
+		5C8EFC014272B3CF987FB39F /* feature */ = {
+			isa = PBXGroup;
+			children = (
+				F9F2EBAFFFA84A0B0E7A1ED4 /* tts-enhancements */,
+			);
+			path = feature;
 			sourceTree = "<group>";
 		};
 		60966B783465222CE5C6F744 /* Views */ = {
@@ -191,6 +370,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		62767F63984AC89F9D5CA5E4 /* 30 */ = {
+			isa = PBXGroup;
+			children = (
+				44F82ED5460DC5FE5401C343 /* bed1a44bf8696d4437b94f87fe2d720127ffef */,
+			);
+			path = 30;
+			sourceTree = "<group>";
+		};
 		635D222A1FB7F1300C66C8B9 /* remotes */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,6 +389,38 @@
 		6B8D2A96CEE3C7D4C6CDE0A0 /* objects */ = {
 			isa = PBXGroup;
 			children = (
+				6FF0D82BC363BCE8F89FFAA7 /* 3d */,
+				8A634225EAF6BF3DC61927EB /* 4d */,
+				A29621CA61C992FD968CAD5C /* 4e */,
+				4671C8C34ED41AF737ACF268 /* 5d */,
+				DF5D6ACF5928866516D1A9F3 /* 6c */,
+				329001E4443A20644F8CE5EE /* 7e */,
+				85AD435DF85DF682D853481F /* 28 */,
+				62767F63984AC89F9D5CA5E4 /* 30 */,
+				95B90AD509ED7F522FDBF48D /* 35 */,
+				25458507E2C2E72BA2CE00BC /* 57 */,
+				117044351284470500F445E0 /* 61 */,
+				387FF1922DFD243AC9A1E156 /* 63 */,
+				4A1F2C618BD3B5F9B44C3756 /* 68 */,
+				7754DFE56716D3F3445411F9 /* 72 */,
+				F9CA136E1DDEABA1B4C8458F /* 74 */,
+				909205550F533F8FDC8810F0 /* 79 */,
+				792C816CB4A51B08FFA51BDB /* 90 */,
+				7BB982D3D19DA0736EEFEDD4 /* 94 */,
+				3A85215EC4C56117B0FDEF79 /* a1 */,
+				CDA751CB929FCB49F7DBA960 /* b6 */,
+				267126867D7A8BACD2302434 /* bf */,
+				D643A56CF6F7CC80E4D8C79C /* c0 */,
+				4794A39200146B4463D1EF48 /* cc */,
+				277DEA9E4C9035C9EF4EE5DD /* cf */,
+				DC35A8EC01907E6B3264C22B /* d5 */,
+				F2661F4DD7097B8EEF6B30F5 /* d7 */,
+				A6842CE214E2EA0C920FF8D0 /* d8 */,
+				08B8DA2539196A9979049F49 /* dc */,
+				ED31030B26E8146B9F0C9CB1 /* e9 */,
+				EF539CF3E05770B54AAFFEC3 /* ec */,
+				F95F305E36A7060ED249918D /* f8 */,
+				5BD70681ACB08CAFAB08AB1B /* f9 */,
 				A39F257FCF750D69B3547762 /* info */,
 				3F6B8B80353AC8D8E1FE9175 /* pack */,
 			);
@@ -218,6 +437,70 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		6FF0D82BC363BCE8F89FFAA7 /* 3d */ = {
+			isa = PBXGroup;
+			children = (
+				567C8F27FEFA4626DC3F62E5 /* a7efecb4e61471d4df6bcffbcde4fd5ed80061 */,
+			);
+			path = 3d;
+			sourceTree = "<group>";
+		};
+		7754DFE56716D3F3445411F9 /* 72 */ = {
+			isa = PBXGroup;
+			children = (
+				24C9FB12C6BD3C42C97A286F /* 2e540f10e86568aea13fbf9c6820a583b41cac */,
+			);
+			path = 72;
+			sourceTree = "<group>";
+		};
+		792C816CB4A51B08FFA51BDB /* 90 */ = {
+			isa = PBXGroup;
+			children = (
+				DEBEF4F8F758E85B84CAA773 /* 624157d06de09d35650fc1104988d2536cad31 */,
+			);
+			path = 90;
+			sourceTree = "<group>";
+		};
+		7BB982D3D19DA0736EEFEDD4 /* 94 */ = {
+			isa = PBXGroup;
+			children = (
+				01BA089CE2F6933A8D5A08BF /* 05dfe56e63bf8bf8209352e6811b681c5e3e92 */,
+			);
+			path = 94;
+			sourceTree = "<group>";
+		};
+		85AD435DF85DF682D853481F /* 28 */ = {
+			isa = PBXGroup;
+			children = (
+				5C2172547298B20A65709887 /* a756469c5f9e91787bd3862f7723fd183cfaf2 */,
+			);
+			path = 28;
+			sourceTree = "<group>";
+		};
+		8A634225EAF6BF3DC61927EB /* 4d */ = {
+			isa = PBXGroup;
+			children = (
+				BD18AE0EBECCC46B6F1A0F95 /* 66a193df60a311fdb038b794c94c7e9afc25e3 */,
+			);
+			path = 4d;
+			sourceTree = "<group>";
+		};
+		8F0273E059467A6D38B2454E /* workflows */ = {
+			isa = PBXGroup;
+			children = (
+				84C8262EB46A0543AD0F1700 /* build.yml */,
+			);
+			path = workflows;
+			sourceTree = "<group>";
+		};
+		909205550F533F8FDC8810F0 /* 79 */ = {
+			isa = PBXGroup;
+			children = (
+				90DAF5340319B141F8358453 /* 616b644a96b83d5fbc3c371b7f1010784ca9e3 */,
+			);
+			path = 79;
+			sourceTree = "<group>";
+		};
 		94E17895AE2DFB09668F6899 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -225,6 +508,22 @@
 				AB6C8CCD4A40561C27169BE0 /* PlatformTypes.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		95B90AD509ED7F522FDBF48D /* 35 */ = {
+			isa = PBXGroup;
+			children = (
+				5FF0B3E5DDDC7BCCC6ED46E7 /* 876d6acc63f335bd00c7e93ae7beccfbe5959e */,
+			);
+			path = 35;
+			sourceTree = "<group>";
+		};
+		A29621CA61C992FD968CAD5C /* 4e */ = {
+			isa = PBXGroup;
+			children = (
+				2A916AA42768AEB1FF255795 /* f0ccfd26a568e48bccaadde985a3d8bf83f491 */,
+			);
+			path = 4e;
 			sourceTree = "<group>";
 		};
 		A39F257FCF750D69B3547762 /* info */ = {
@@ -236,6 +535,31 @@
 			path = info;
 			sourceTree = "<group>";
 		};
+		A6842CE214E2EA0C920FF8D0 /* d8 */ = {
+			isa = PBXGroup;
+			children = (
+				1DF0DEE5133C89DBEEFBC583 /* 7988215194e75a4a322c78f863f1373948f1f9 */,
+			);
+			path = d8;
+			sourceTree = "<group>";
+		};
+		C18253825CCE32A4DFA762E1 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				27DCDFBACC66C42864D43898 /* PDFTextCleanerTests.swift */,
+				1E849F4292B07F7D4BCB61FC /* TTSServiceTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		CDA751CB929FCB49F7DBA960 /* b6 */ = {
+			isa = PBXGroup;
+			children = (
+				B8143B4901B47FFC2F7521AF /* 962ce8762e7dc2fc12c4bc2d1064a846655de8 */,
+			);
+			path = b6;
+			sourceTree = "<group>";
+		};
 		D0186415093AB1F7C3B741AC /* logs */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,12 +569,53 @@
 			path = logs;
 			sourceTree = "<group>";
 		};
+		D111C149688ADACCE3E5BA33 /* heads */ = {
+			isa = PBXGroup;
+			children = (
+				FF4C6BB2B571D01A42157869 /* feature */,
+			);
+			path = heads;
+			sourceTree = "<group>";
+		};
+		D643A56CF6F7CC80E4D8C79C /* c0 */ = {
+			isa = PBXGroup;
+			children = (
+				B22D842630FE5618C067CFDD /* 1dd3a27ac39d5360d9d71eeb0ea54ee751ebc0 */,
+			);
+			path = c0;
+			sourceTree = "<group>";
+		};
 		D9ADF156351877E45AC622CB /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				427CAD6663461779CA16FC48 /* SpeakBook.app */,
+				B5058860147A81DD282B1EBF /* SpeakBookTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DB59AFBB5A29C8FAE1B4DCAF /* feature */ = {
+			isa = PBXGroup;
+			children = (
+				F4CD8E0CF2325301E122C030 /* tts-enhancements */,
+			);
+			path = feature;
+			sourceTree = "<group>";
+		};
+		DC35A8EC01907E6B3264C22B /* d5 */ = {
+			isa = PBXGroup;
+			children = (
+				53B5CD7FFA7B317EFC1DB13F /* 27d9a90f1d63d7f42f4148abfce2e11e09d57b */,
+			);
+			path = d5;
+			sourceTree = "<group>";
+		};
+		DF5D6ACF5928866516D1A9F3 /* 6c */ = {
+			isa = PBXGroup;
+			children = (
+				A0042E3A92C68718ED05A48A /* 874197c5969f6397ef82eee24211fb60f14230 */,
+			);
+			path = 6c;
 			sourceTree = "<group>";
 		};
 		E1354B64B23A4840FF2AD7BE /* info */ = {
@@ -266,6 +631,7 @@
 			isa = PBXGroup;
 			children = (
 				D49E9ACF34A98D563A303165 /* main */,
+				0DE9CE4D0FE1DEFF0A5CAC12 /* feature */,
 			);
 			path = origin;
 			sourceTree = "<group>";
@@ -287,10 +653,35 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		ED31030B26E8146B9F0C9CB1 /* e9 */ = {
+			isa = PBXGroup;
+			children = (
+				D95F073BADC9C65C358AB529 /* a3dfb1735bcb2cf1c47a1f18915c41fe8a0bee */,
+			);
+			path = e9;
+			sourceTree = "<group>";
+		};
+		EF539CF3E05770B54AAFFEC3 /* ec */ = {
+			isa = PBXGroup;
+			children = (
+				D9664D4E50FEB63B81399264 /* bd40fa4fa592c640f8dd1b52b0c4b9b5be2f1f */,
+			);
+			path = ec;
+			sourceTree = "<group>";
+		};
+		F2661F4DD7097B8EEF6B30F5 /* d7 */ = {
+			isa = PBXGroup;
+			children = (
+				61F7DC06C24E8C4E7B75ED80 /* 3095ba9f1c89771accfa40488b00d0326ff403 */,
+			);
+			path = d7;
+			sourceTree = "<group>";
+		};
 		F41D3B995499BF9BF6690B05 /* origin */ = {
 			isa = PBXGroup;
 			children = (
 				75A096DA473C799C625D0345 /* main */,
+				DB59AFBB5A29C8FAE1B4DCAF /* feature */,
 			);
 			path = origin;
 			sourceTree = "<group>";
@@ -313,18 +704,44 @@
 			path = .git;
 			sourceTree = "<group>";
 		};
+		F95F305E36A7060ED249918D /* f8 */ = {
+			isa = PBXGroup;
+			children = (
+				8405D6893F55EE37776C1A5A /* a55e5b6175625552f7be66c5fe204b5d0ec6a6 */,
+			);
+			path = f8;
+			sourceTree = "<group>";
+		};
+		F9CA136E1DDEABA1B4C8458F /* 74 */ = {
+			isa = PBXGroup;
+			children = (
+				EA81AF02846A3E17F9BB5E59 /* e9b2dc43061098dff12d5408400a58f0bb94c7 */,
+			);
+			path = 74;
+			sourceTree = "<group>";
+		};
 		FC8F39C48297BECBE9CFE808 = {
 			isa = PBXGroup;
 			children = (
 				F66CB43BB854C7CFF85EA342 /* .git */,
+				4AA7C5E527D2610FAB6F3CBC /* .github */,
 				45220B900744FFC91837BE71 /* Models */,
 				EB4BD70A8D3186ED9E912021 /* Packages */,
 				6B9C4F7EB347FBB04F41662E /* Services */,
 				4DE0F42184FA3D190E0C1E0C /* SpeakBook */,
+				C18253825CCE32A4DFA762E1 /* Tests */,
 				94E17895AE2DFB09668F6899 /* Utilities */,
 				60966B783465222CE5C6F744 /* Views */,
 				D9ADF156351877E45AC622CB /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		FF4C6BB2B571D01A42157869 /* feature */ = {
+			isa = PBXGroup;
+			children = (
+				A497D037EF99551ADF15AF85 /* tts-enhancements */,
+			);
+			path = feature;
 			sourceTree = "<group>";
 		};
 		FFDF94E9DE64F7ACCA8803C3 /* remotes */ = {
@@ -338,6 +755,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1547AF3710DC66FEE439BBC6 /* SpeakBookTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5BF395E72CA44932EB37D2C /* Build configuration list for PBXNativeTarget "SpeakBookTests" */;
+			buildPhases = (
+				07A1802BACB2F56DC0180E82 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				82C17E0F3C3EA40C9A5E6891 /* PBXTargetDependency */,
+			);
+			name = SpeakBookTests;
+			packageProductDependencies = (
+			);
+			productName = SpeakBookTests;
+			productReference = B5058860147A81DD282B1EBF /* SpeakBookTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		CD220F5701AE2B3BD662C319 /* SpeakBook */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FC1FD6F5E2AC3E660981886A /* Build configuration list for PBXNativeTarget "SpeakBook" */;
@@ -367,6 +802,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					1547AF3710DC66FEE439BBC6 = {
+						DevelopmentTeam = VMX95L6446;
+						ProvisioningStyle = Automatic;
+					};
 					CD220F5701AE2B3BD662C319 = {
 						DevelopmentTeam = VMX95L6446;
 						ProvisioningStyle = Automatic;
@@ -391,6 +830,7 @@
 			projectRoot = "";
 			targets = (
 				CD220F5701AE2B3BD662C319 /* SpeakBook */,
+				1547AF3710DC66FEE439BBC6 /* SpeakBookTests */,
 			);
 		};
 /* End PBXProject section */
@@ -400,7 +840,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D4A50A941668E646CEE4D7E /* .swiftlint.yml in Resources */,
 				5BD9E37A7537FBDF139922B2 /* applypatch-msg.sample in Resources */,
+				C9490C0043021D17AD4C5413 /* build.yml in Resources */,
 				7651DEC31FCB4ECA58589A82 /* commit-msg.sample in Resources */,
 				AA11E42633820E966A95F927 /* download_models.sh in Resources */,
 				34570AD99A8EC86430913610 /* fsmonitor-watchman.sample in Resources */,
@@ -426,6 +868,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		07A1802BACB2F56DC0180E82 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D725EC172EAD9DB3840446C /* PDFTextCleanerTests.swift in Sources */,
+				1E9AF767DF656304A63EF994 /* TTSServiceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC415D254D3D13C9361B12D9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -446,6 +897,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		82C17E0F3C3EA40C9A5E6891 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CD220F5701AE2B3BD662C319 /* SpeakBook */;
+			targetProxy = 4A49A337FE8A31044B92617F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		06D3E253E39AEDECBA8071A8 /* Debug */ = {
@@ -596,6 +1055,30 @@
 			};
 			name = Debug;
 		};
+		6384E0CB198E280B86D52FD4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.speakbook.SpeakBookTests;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/SpeakBook";
+				"TEST_HOST[sdk=iphoneos*]" = "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/SpeakBook";
+				"TEST_HOST[sdk=iphonesimulator*]" = "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/SpeakBook";
+				"TEST_HOST[sdk=macosx*]" = "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/Contents/MacOS/SpeakBook";
+			};
+			name = Release;
+		};
 		EEB62A81132E0ED79A75B01A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -617,6 +1100,30 @@
 			};
 			name = Release;
 		};
+		F57713FA732B0799B1265258 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.speakbook.SpeakBookTests;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/SpeakBook";
+				"TEST_HOST[sdk=iphoneos*]" = "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/SpeakBook";
+				"TEST_HOST[sdk=iphonesimulator*]" = "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/SpeakBook";
+				"TEST_HOST[sdk=macosx*]" = "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/Contents/MacOS/SpeakBook";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -625,6 +1132,15 @@
 			buildConfigurations = (
 				06D3E253E39AEDECBA8071A8 /* Debug */,
 				19F8DDD5C6EEC8CA99EB0450 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D5BF395E72CA44932EB37D2C /* Build configuration list for PBXNativeTarget "SpeakBookTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F57713FA732B0799B1265258 /* Debug */,
+				6384E0CB198E280B86D52FD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

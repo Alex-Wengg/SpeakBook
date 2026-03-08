@@ -28,9 +28,32 @@ targets:
           - chinesebooks
           - fluidaudio_cli
           - pocket-tts
+          - Tests
     dependencies:
       - package: FluidAudio
         product: FluidAudio
+  SpeakBookTests:
+    type: bundle.unit-test
+    supportedDestinations: [iOS, macOS]
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      TEST_HOST[sdk=macosx*]: "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/Contents/MacOS/SpeakBook"
+      TEST_HOST[sdk=iphoneos*]: "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/SpeakBook"
+      TEST_HOST[sdk=iphonesimulator*]: "$(BUILT_PRODUCTS_DIR)/SpeakBook.app/SpeakBook"
+      BUNDLE_LOADER: "$(TEST_HOST)"
+    sources:
+      - path: Tests
+    dependencies:
+      - target: SpeakBook
+schemes:
+  SpeakBook:
+    build:
+      targets:
+        SpeakBook: all
+        SpeakBookTests: [test]
+    test:
+      targets:
+        - SpeakBookTests
 packages:
   FluidAudio:
     path: ../FluidAudio

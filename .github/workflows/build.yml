@@ -66,9 +66,24 @@ jobs:
             | tee build.log \
             | grep -E '(error:|warning:|BUILD|Compiling|Linking)' || true
 
+      - name: Test
+        if: matrix.platform == 'macOS'
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SpeakBook.xcodeproj \
+            -scheme SpeakBook \
+            -destination '${{ matrix.destination }}' \
+            CODE_SIGNING_ALLOWED=NO \
+            test 2>&1 \
+            | tee test.log \
+            | grep -E '(error:|Test Case|Test Suite|passed|failed|TEST)' || true
+
       - name: Upload build log on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: build-log-${{ matrix.platform }}
-          path: build.log
+          path: |
+            build.log
+            test.log

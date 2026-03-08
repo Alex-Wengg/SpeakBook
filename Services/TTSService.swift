@@ -311,7 +311,7 @@ final class TTSService {
 
     // MARK: - Text Chunking
 
-    private func splitIntoChunks(_ text: String) -> [String] {
+    func splitIntoChunks(_ text: String) -> [String] {
         var result: [String] = []
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return [] }
@@ -362,7 +362,7 @@ final class TTSService {
     }
 
     /// Returns the pause duration in seconds based on the trailing punctuation of a chunk.
-    private func pauseDuration(after text: String) -> TimeInterval {
+    func pauseDuration(after text: String) -> TimeInterval {
         guard let last = text.last else { return 0 }
         switch last {
         case ".":  return 0.45
