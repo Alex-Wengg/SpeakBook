@@ -63,8 +63,7 @@ jobs:
             -destination '${{ matrix.destination }}' \
             CODE_SIGNING_ALLOWED=NO \
             build 2>&1 \
-            | tee build.log \
-            | grep -E '(error:|warning:|BUILD|Compiling|Linking)' || true
+            | tee build.log
 
       - name: Test
         if: matrix.platform == 'macOS'
@@ -76,8 +75,7 @@ jobs:
             -destination '${{ matrix.destination }}' \
             CODE_SIGNING_ALLOWED=NO \
             test 2>&1 \
-            | tee test.log \
-            | grep -E '(error:|Test Case|Test Suite|passed|failed|TEST)' || true
+            | tee test.log
 
       - name: Upload build log on failure
         if: failure()
