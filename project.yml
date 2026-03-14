@@ -28,6 +28,7 @@ targets:
           - chinesebooks
           - fluidaudio_cli
           - pocket-tts
+          - ios-learning-materials
           - Tests
     dependencies:
       - package: FluidAudio

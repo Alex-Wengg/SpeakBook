@@ -4,6 +4,8 @@ import SwiftData
 enum BookFileType: String, Codable {
     case pdf
     case epub
+    case txt
+    case markdown
 }
 
 @Model
@@ -19,6 +21,9 @@ final class Book {
     var currentPage: Int
     var currentChapter: String?
     var currentPosition: Double
+    var ttsSentenceIndex: Int?
+    var preferredEngine: String?
+    var preferredVoice: String?
 
     init(
         title: String,

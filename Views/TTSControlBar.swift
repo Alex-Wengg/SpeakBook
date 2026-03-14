@@ -3,10 +3,15 @@ import SwiftUI
 struct TTSControlBar: View {
     @Bindable var ttsService: TTSService
     let getText: () -> String?
+    var onEngineChanged: ((TTSService.TTSEngine) -> Void)?
+    var onVoiceChanged: ((String) -> Void)?
+    var getStartChunk: (() -> Int)?
 
     @State private var showEnginePicker = false
     @State private var showVoicePicker = false
     @State private var showTextPicker = false
+    @State private var showLexiconEditor = false
+    @State private var showSleepTimer = false
 
     var body: some View {
         VStack(spacing: 8) {
@@ -41,7 +46,8 @@ struct TTSControlBar: View {
                 .popover(isPresented: $showEnginePicker) {
                     EnginePickerView(
                         ttsService: ttsService,
-                        isPresented: $showEnginePicker
+                        isPresented: $showEnginePicker,
+                        onEngineChanged: onEngineChanged
                     )
                 }
 
@@ -55,7 +61,8 @@ struct TTSControlBar: View {
                 .popover(isPresented: $showVoicePicker) {
                     VoicePickerView(
                         ttsService: ttsService,
-                        isPresented: $showVoicePicker
+                        isPresented: $showVoicePicker,
+                        onVoiceChanged: onVoiceChanged
                     )
                 }
 
@@ -72,6 +79,55 @@ struct TTSControlBar: View {
                         getText: getText,
                         isPresented: $showTextPicker
                     )
+                }
+
+                // Lexicon editor (Kokoro only)
+                if ttsService.currentEngine == .kokoro {
+                    Button {
+                        showLexiconEditor = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "character.book.closed")
+                                .font(.title3)
+                            if ttsService.lexiconEntryCount > 0 {
+                                Text("\(ttsService.lexiconEntryCount)")
+                                    .font(.caption2)
+                                    .fontWeight(.medium)
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $showLexiconEditor) {
+                        LexiconEditorView(ttsService: ttsService)
+                    }
+                }
+
+                // Skip silence toggle
+                Button {
+                    ttsService.skipSilence.toggle()
+                } label: {
+                    Image(systemName: ttsService.skipSilence ? "forward.fill" : "forward")
+                        .font(.title3)
+                        .foregroundStyle(ttsService.skipSilence ? .blue : .primary)
+                }
+
+                // Sleep timer
+                Button {
+                    showSleepTimer = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: ttsService.sleepTimerMode == .off ? "moon" : "moon.fill")
+                            .font(.title3)
+                            .foregroundStyle(ttsService.sleepTimerMode == .off ? Color.primary : Color.orange)
+                        if ttsService.sleepTimerRemainingSeconds > 0 {
+                            Text(formatSleepTime(ttsService.sleepTimerRemainingSeconds))
+                                .font(.caption2)
+                                .monospacedDigit()
+                                .foregroundStyle(.orange)
+                        }
+                    }
+                }
+                .popover(isPresented: $showSleepTimer) {
+                    SleepTimerPickerView(ttsService: ttsService, isPresented: $showSleepTimer)
                 }
 
                 Spacer()
@@ -144,11 +200,18 @@ struct TTSControlBar: View {
         .background(.bar)
     }
 
+    private func formatSleepTime(_ seconds: Int) -> String {
+        let m = seconds / 60
+        let s = seconds % 60
+        return String(format: "%d:%02d", m, s)
+    }
+
     private func handlePlayPause() async {
         switch ttsService.state {
         case .idle, .ready, .error:
             if let text = getText() {
-                await ttsService.speak(text: text)
+                let startChunk = getStartChunk?() ?? 0
+                await ttsService.speak(text: text, startFromChunk: startChunk)
             }
         case .playing:
             ttsService.pause()
@@ -163,6 +226,7 @@ struct TTSControlBar: View {
 struct VoicePickerView: View {
     @Bindable var ttsService: TTSService
     @Binding var isPresented: Bool
+    var onVoiceChanged: ((String) -> Void)?
 
     var body: some View {
         NavigationStack {
@@ -170,6 +234,7 @@ struct VoicePickerView: View {
                 Button {
                     Task {
                         await ttsService.setVoice(voice)
+                        onVoiceChanged?(voice)
                         isPresented = false
                     }
                 } label: {
@@ -225,6 +290,7 @@ struct VoicePickerView: View {
 struct EnginePickerView: View {
     @Bindable var ttsService: TTSService
     @Binding var isPresented: Bool
+    var onEngineChanged: ((TTSService.TTSEngine) -> Void)?
 
     var body: some View {
         NavigationStack {
@@ -232,6 +298,7 @@ struct EnginePickerView: View {
                 Button {
                     Task {
                         await ttsService.setEngine(engine)
+                        onEngineChanged?(engine)
                         isPresented = false
                     }
                 } label: {
@@ -385,5 +452,84 @@ struct TextStartPickerView: View {
         Task {
             await ttsService.speak(text: remainingText)
         }
+    }
+}
+
+struct SleepTimerPickerView: View {
+    @Bindable var ttsService: TTSService
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Button {
+                    ttsService.cancelSleepTimer()
+                    isPresented = false
+                } label: {
+                    HStack {
+                        Text("Off")
+                        Spacer()
+                        if ttsService.sleepTimerMode == .off {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(Color.accentColor)
+                        }
+                    }
+                }
+                .foregroundStyle(.primary)
+
+                Section("Timer") {
+                    ForEach([15, 30, 60], id: \.self) { minutes in
+                        Button {
+                            ttsService.setSleepTimer(.timed(minutes: minutes))
+                            isPresented = false
+                        } label: {
+                            HStack {
+                                Text("\(minutes) minutes")
+                                Spacer()
+                                if case .timed(let m) = ttsService.sleepTimerMode, m == minutes {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(Color.accentColor)
+                                }
+                            }
+                        }
+                        .foregroundStyle(.primary)
+                    }
+                }
+
+                Section("Auto-stop") {
+                    Button {
+                        ttsService.setSleepTimer(.endOfSection)
+                        isPresented = false
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("End of chapter / page")
+                                Text("Stops after the current section finishes")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            if ttsService.sleepTimerMode == .endOfSection {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                        }
+                    }
+                    .foregroundStyle(.primary)
+                }
+            }
+            .navigationTitle("Sleep Timer")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        isPresented = false
+                    }
+                }
+            }
+        }
+        .frame(minWidth: 250, minHeight: 300)
     }
 }

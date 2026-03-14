@@ -27,9 +27,19 @@ struct PDFReaderView: View {
                 }
 
                 if showTTSControls {
-                    TTSControlBar(ttsService: ttsService) {
+                    TTSControlBar(ttsService: ttsService, getText: {
                         getCurrentPageText()
-                    }
+                    }, onEngineChanged: { engine in
+                        book.preferredEngine = engine.rawValue
+                    }, onVoiceChanged: { voice in
+                        book.preferredVoice = voice
+                    }, getStartChunk: {
+                        // Resume from saved sentence if on the same page
+                        if book.currentPage == currentPage, let idx = book.ttsSentenceIndex, idx > 0 {
+                            return idx
+                        }
+                        return 0
+                    })
                 }
 
                 pageIndicator
@@ -67,13 +77,29 @@ struct PDFReaderView: View {
         }
         .onAppear {
             loadPDF()
+            Task { await ttsService.applyBookSettings(engine: book.preferredEngine, voice: book.preferredVoice) }
+            ttsService.onSentenceChanged = { index in
+                book.ttsSentenceIndex = index
+                // Update overall reading position (page + within-page progress)
+                if totalPages > 1 {
+                    let chunkCount = ttsService.sentences.count
+                    let withinPage = chunkCount > 0 ? Double(index) / Double(chunkCount) : 0
+                    book.currentPosition = (Double(currentPage) + withinPage) / Double(totalPages - 1)
+                }
+            }
             ttsService.onPlaybackFinished = {
+                // Sleep timer: end of section stops playback here
+                if case .endOfSection = ttsService.sleepTimerMode {
+                    ttsService.cancelSleepTimer()
+                    return
+                }
                 print("[TTS] onPlaybackFinished called. showTTSControls=\(showTTSControls), currentPage=\(currentPage), totalPages=\(totalPages)")
                 guard showTTSControls, currentPage < totalPages - 1 else {
                     print("[TTS] Guard failed, not advancing")
                     return
                 }
                 currentPage += 1
+                book.ttsSentenceIndex = nil
                 print("[TTS] Advanced to page \(currentPage)")
                 Task {
                     if let text = getCurrentPageText() {
@@ -86,6 +112,7 @@ struct PDFReaderView: View {
             }
         }
         .onDisappear {
+            ttsService.onSentenceChanged = nil
             ttsService.onPlaybackFinished = nil
             ttsService.stop()
             saveProgress()
@@ -94,6 +121,7 @@ struct PDFReaderView: View {
             updateProgress(page: newValue)
             // Stop TTS when user manually changes page
             if ttsService.isPlaying {
+                book.ttsSentenceIndex = nil
                 ttsService.stop()
             }
         }

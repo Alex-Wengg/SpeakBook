@@ -34,7 +34,7 @@ struct LibraryView: View {
             }
             .fileImporter(
                 isPresented: $isImporting,
-                allowedContentTypes: [.pdf, .epub],
+                allowedContentTypes: [.pdf, .epub, .plainText, .markdown],
                 allowsMultipleSelection: true
             ) { result in
                 handleFileImport(result)
@@ -60,9 +60,16 @@ struct LibraryView: View {
                 guard !existingPaths.contains(fileName) else { continue }
 
                 let ext = fileURL.pathExtension.lowercased()
-                guard ext == "pdf" || ext == "epub" else { continue }
+                guard ext == "pdf" || ext == "epub" || ext == "txt" || ext == "md" else { continue }
 
-                let fileType: BookFileType = ext == "pdf" ? .pdf : .epub
+                let fileType: BookFileType
+                switch ext {
+                case "pdf": fileType = .pdf
+                case "epub": fileType = .epub
+                case "txt": fileType = .txt
+                case "md": fileType = .markdown
+                default: continue
+                }
                 let title = fileURL.deletingPathExtension().lastPathComponent
                     .replacingOccurrences(of: "_", with: " ")
 
@@ -96,7 +103,7 @@ struct LibraryView: View {
         ContentUnavailableView {
             Label("No Books", systemImage: "books.vertical")
         } description: {
-            Text("Tap + to import PDF or ePub files")
+            Text("Tap + to import PDF, ePub, TXT, or Markdown files")
         } actions: {
             Button("Import Books") {
                 isImporting = true
@@ -145,11 +152,12 @@ struct LibraryView: View {
         defer { url.stopAccessingSecurityScopedResource() }
 
         let fileType: BookFileType
-        if url.pathExtension.lowercased() == "pdf" {
-            fileType = .pdf
-        } else if url.pathExtension.lowercased() == "epub" {
-            fileType = .epub
-        } else {
+        switch url.pathExtension.lowercased() {
+        case "pdf": fileType = .pdf
+        case "epub": fileType = .epub
+        case "txt": fileType = .txt
+        case "md": fileType = .markdown
+        default:
             print("Unsupported file type: \(url.pathExtension)")
             return
         }
@@ -224,7 +232,13 @@ struct BookCardView: View {
                     .fill(Color.secondary.opacity(0.2))
                     .frame(height: 200)
                     .overlay {
-                        Image(systemName: book.fileType == .pdf ? "doc.fill" : "book.fill")
+                        Image(systemName: {
+                            switch book.fileType {
+                            case .pdf: return "doc.fill"
+                            case .epub: return "book.fill"
+                            case .txt, .markdown: return "doc.plaintext"
+                            }
+                        }())
                             .font(.largeTitle)
                             .foregroundStyle(.secondary)
                     }

@@ -12,6 +12,8 @@ struct ReaderView: View {
                 PDFReaderView(book: book)
             case .epub:
                 EPubReaderView(book: book)
+            case .txt, .markdown:
+                TextReaderView(book: book)
             }
         }
         .navigationTitle(book.title)

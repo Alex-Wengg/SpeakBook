@@ -11,6 +11,7 @@ struct EPubReaderView: View {
     @State private var errorMessage: String?
     @State private var showTTSControls = false
     @State private var currentChapterText: String?
+    @State private var isAutoAdvancing = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -34,9 +35,18 @@ struct EPubReaderView: View {
                 )
 
                 if showTTSControls {
-                    TTSControlBar(ttsService: ttsService) {
+                    TTSControlBar(ttsService: ttsService, getText: {
                         currentChapterText
-                    }
+                    }, onEngineChanged: { engine in
+                        book.preferredEngine = engine.rawValue
+                    }, onVoiceChanged: { voice in
+                        book.preferredVoice = voice
+                    }, getStartChunk: {
+                        if let idx = book.ttsSentenceIndex, idx > 0 {
+                            return idx
+                        }
+                        return 0
+                    })
                 }
 
                 chapterNavigator
@@ -72,15 +82,51 @@ struct EPubReaderView: View {
         }
         .onAppear {
             loadEPub()
+            Task { await ttsService.applyBookSettings(engine: book.preferredEngine, voice: book.preferredVoice) }
+            ttsService.onSentenceChanged = { index in
+                book.ttsSentenceIndex = index
+                // Update overall reading position (chapter + within-chapter progress)
+                if let metadata = metadata, metadata.spine.count > 1 {
+                    let chunkCount = ttsService.sentences.count
+                    let withinChapter = chunkCount > 0 ? Double(index) / Double(chunkCount) : 0
+                    book.currentPosition = (Double(currentChapterIndex) + withinChapter) / Double(metadata.spine.count - 1)
+                }
+            }
+            ttsService.onPlaybackFinished = {
+                // Sleep timer: end of section stops playback here
+                if case .endOfSection = ttsService.sleepTimerMode {
+                    ttsService.cancelSleepTimer()
+                    return
+                }
+                guard showTTSControls else { return }
+                guard let metadata = metadata,
+                      currentChapterIndex < metadata.spine.count - 1 else { return }
+
+                isAutoAdvancing = true
+                currentChapterIndex += 1
+                book.ttsSentenceIndex = nil
+
+                Task {
+                    // Wait for WKWebView to load and extract the new chapter text
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    if let text = currentChapterText {
+                        await ttsService.speak(text: text)
+                    }
+                }
+            }
         }
         .onDisappear {
+            ttsService.onSentenceChanged = nil
+            ttsService.onPlaybackFinished = nil
             ttsService.stop()
             saveProgress()
         }
         .onChange(of: currentChapterIndex) { _, _ in
-            if ttsService.isPlaying {
+            if ttsService.isPlaying && !isAutoAdvancing {
+                book.ttsSentenceIndex = nil
                 ttsService.stop()
             }
+            isAutoAdvancing = false
         }
     }
 

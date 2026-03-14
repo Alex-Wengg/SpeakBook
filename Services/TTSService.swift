@@ -22,12 +22,19 @@ final class TTSService {
         case kokoro = "Kokoro"
     }
 
+    enum SleepTimerMode: Equatable {
+        case off
+        case timed(minutes: Int)
+        case endOfSection
+    }
+
     private(set) var state: State = .idle
     private(set) var loadingMessage: String = ""
     private(set) var currentVoice: String = "alba"
     private(set) var currentEngine: TTSEngine = .pocketTTS
     private(set) var progress: Double = 0.0
     var debugMode: Bool = false
+    var skipSilence: Bool = false
     var volume: Float = 1.0 {
         didSet { audioEngine?.mainMixerNode.outputVolume = volume }
     }
@@ -35,6 +42,11 @@ final class TTSService {
     private(set) var currentSentenceIndex: Int = -1
     private(set) var sentences: [String] = []
     var onPlaybackFinished: (() -> Void)?
+    var onSentenceChanged: ((Int) -> Void)?
+    private(set) var customLexicon: TtsCustomLexicon?
+    private(set) var lexiconEntryCount: Int = 0
+    private(set) var sleepTimerMode: SleepTimerMode = .off
+    private(set) var sleepTimerRemainingSeconds: Int = 0
 
     private var pocketManager: PocketTtsManager?
     private var kokoroManager: KokoroTtsManager?
@@ -42,6 +54,7 @@ final class TTSService {
     private var playerNode: AVAudioPlayerNode?
     private var synthesisTask: Task<Void, Never>?
     private var idleUnloadTask: Task<Void, Never>?
+    private var sleepTimerTask: Task<Void, Never>?
     private var isStopped = false
     private var totalSamples = 0
     private var playedSamples = 0
@@ -66,6 +79,7 @@ final class TTSService {
 
     init() {
         setupAudioSession()
+        loadCustomLexicon()
     }
 
     private func setupAudioSession() {
@@ -80,6 +94,17 @@ final class TTSService {
     }
 
     // MARK: - Engine Management
+
+    func applyBookSettings(engine: String?, voice: String?) async {
+        if let engineRaw = engine, let engine = TTSEngine(rawValue: engineRaw) {
+            if engine != currentEngine {
+                await setEngine(engine)
+            }
+        }
+        if let voice = voice, voice != currentVoice {
+            await setVoice(voice)
+        }
+    }
 
     func setEngine(_ engine: TTSEngine) async {
         guard engine != currentEngine else { return }
@@ -138,7 +163,7 @@ final class TTSService {
         ttsLogger.notice("Starting Kokoro initialization")
 
         do {
-            let mgr = KokoroTtsManager(defaultVoice: currentVoice)
+            let mgr = KokoroTtsManager(defaultVoice: currentVoice, customLexicon: customLexicon)
             try await mgr.initialize()
             kokoroManager = mgr
 
@@ -162,7 +187,7 @@ final class TTSService {
 
     // MARK: - Synthesis
 
-    func speak(text: String) async {
+    func speak(text: String, startFromChunk: Int = 0) async {
         guard !text.isEmpty else { return }
 
         cancelIdleUnloadTimer()
@@ -185,6 +210,7 @@ final class TTSService {
         let chunks = splitIntoChunks(text)
         sentences = chunks
         let totalChunks = chunks.count
+        let effectiveStart = min(max(startFromChunk, 0), totalChunks - 1)
 
         setupAudioEngine()
 
@@ -204,10 +230,12 @@ final class TTSService {
 
                 for (index, chunk) in chunks.enumerated() {
                     guard !isStopped else { break }
+                    if index < effectiveStart { continue }
 
                     await MainActor.run {
                         self.currentSentenceIndex = index
                         self.currentSentence = chunk
+                        self.onSentenceChanged?(index)
                     }
 
                     ttsLogger.notice("[\(self.currentEngine.rawValue)] Synthesizing chunk \(index + 1)/\(totalChunks)")
@@ -223,15 +251,18 @@ final class TTSService {
 
                     guard !isStopped else { break }
 
+                    // Trim trailing near-silence when skip silence is enabled
+                    let processedSamples = skipSilence ? trimTrailingSilence(from: samples) : samples
+
                     let chunkTime = Date().timeIntervalSince(chunkStart)
-                    let chunkDuration = Double(samples.count) / 24000.0
+                    let chunkDuration = Double(processedSamples.count) / 24000.0
                     ttsLogger.notice("Chunk \(index + 1) done: \(String(format: "%.1f", chunkDuration))s audio in \(String(format: "%.1f", chunkTime))s (\(String(format: "%.1f", chunkDuration / chunkTime))x RTFx)")
 
-                    cumulativeSamples += samples.count
+                    cumulativeSamples += processedSamples.count
                     totalSamples = cumulativeSamples
 
                     // Append silence to samples based on trailing punctuation
-                    var samplesWithPause = samples
+                    var samplesWithPause = processedSamples
                     if index < totalChunks - 1 {
                         let pause = pauseDuration(after: chunk)
                         if pause > 0 {
@@ -239,7 +270,7 @@ final class TTSService {
                         }
                     }
 
-                    cumulativeSamples += samplesWithPause.count - samples.count
+                    cumulativeSamples += samplesWithPause.count - processedSamples.count
                     let buffer = createPCMBuffer(from: samplesWithPause)
                     let chunkIndex = index
                     let isLastChunk = index == totalChunks - 1
@@ -297,11 +328,22 @@ final class TTSService {
         return result.samples
     }
 
+    /// Guard frames to trim from the end of each Kokoro chunk (4 frames × 600 samples = 100ms).
+    /// FluidAudio only trims the 5s variant internally; we trim all variants here to remove
+    /// trailing artifacts the model appends.
+    private let kokoroGuardSamples = 4 * 600
+
     private func synthesizeKokoro(_ text: String) async throws -> [Float] {
         guard let mgr = kokoroManager else { throw TTSError.notInitialized }
         let result = try await mgr.synthesizeDetailed(text: text, voice: currentVoice)
-        // Kokoro returns samples per chunk — concatenate all chunk samples
-        return result.chunks.flatMap { $0.samples }
+        // Concatenate chunk samples, trimming guard frames from each chunk's tail
+        return result.chunks.flatMap { chunk -> [Float] in
+            let samples = chunk.samples
+            if samples.count > kokoroGuardSamples {
+                return Array(samples.dropLast(kokoroGuardSamples))
+            }
+            return samples
+        }
     }
 
     private enum TTSError: LocalizedError {
@@ -364,15 +406,113 @@ final class TTSService {
     /// Returns the pause duration in seconds based on the trailing punctuation of a chunk.
     func pauseDuration(after text: String) -> TimeInterval {
         guard let last = text.last else { return 0 }
+        let base: TimeInterval
         switch last {
-        case ".":  return 0.45
-        case "!":  return 0.40
-        case "?":  return 0.50
-        case ",":  return 0.15
-        case ";":  return 0.25
-        case ":":  return 0.30
-        default:   return 0.10
+        case ".":  base = 0.45
+        case "!":  base = 0.40
+        case "?":  base = 0.50
+        case ",":  base = 0.15
+        case ";":  base = 0.25
+        case ":":  base = 0.30
+        default:   base = 0.10
         }
+        return skipSilence ? base * 0.3 : base
+    }
+
+    /// Trims trailing near-silence from audio samples, keeping a 50ms tail.
+    private func trimTrailingSilence(from samples: [Float]) -> [Float] {
+        let threshold: Float = 0.005
+        let tailSamples = Int(24000.0 * 0.05) // 50ms at 24kHz
+
+        // Find last sample above threshold
+        var lastLoudIndex = samples.count - 1
+        while lastLoudIndex > 0 && abs(samples[lastLoudIndex]) < threshold {
+            lastLoudIndex -= 1
+        }
+
+        // Keep 50ms tail after last loud sample
+        let endIndex = min(samples.count, lastLoudIndex + tailSamples + 1)
+        return Array(samples.prefix(endIndex))
+    }
+
+    // MARK: - Preview (standalone playback, doesn't affect main state)
+
+    private var previewEngine: AVAudioEngine?
+    private var previewPlayer: AVAudioPlayerNode?
+    private var previewTask: Task<Void, Never>?
+
+    /// Synthesize and play a short text snippet for preview purposes.
+    /// Uses a separate audio engine — does not affect main playback state.
+    func preview(text: String) async {
+        guard !text.isEmpty else { return }
+
+        // Ensure Kokoro is ready
+        if kokoroManager == nil { await initializeKokoro() }
+        guard let mgr = kokoroManager else { return }
+
+        // Stop any previous preview
+        stopPreview()
+
+        // Synthesize
+        let samples: [Float]
+        do {
+            let result = try await mgr.synthesizeDetailed(text: text, voice: currentVoice)
+            samples = result.chunks.flatMap { chunk -> [Float] in
+                let s = chunk.samples
+                if s.count > kokoroGuardSamples {
+                    return Array(s.dropLast(kokoroGuardSamples))
+                }
+                return s
+            }
+        } catch {
+            ttsLogger.error("Preview synthesis failed: \(error.localizedDescription)")
+            return
+        }
+
+        guard !samples.isEmpty else { return }
+
+        // Set up a dedicated preview audio engine
+        let engine = AVAudioEngine()
+        let player = AVAudioPlayerNode()
+        let format = AVAudioFormat(
+            commonFormat: .pcmFormatFloat32, sampleRate: 24000, channels: 1, interleaved: false
+        )!
+
+        engine.attach(player)
+        engine.connect(player, to: engine.mainMixerNode, format: format)
+        engine.mainMixerNode.outputVolume = volume
+        engine.prepare()
+
+        let buffer = createPCMBuffer(from: samples)
+
+        do {
+            try engine.start()
+        } catch {
+            ttsLogger.error("Preview engine start failed: \(error.localizedDescription)")
+            return
+        }
+
+        previewEngine = engine
+        previewPlayer = player
+
+        player.scheduleBuffer(buffer, completionHandler: nil)
+        player.play()
+
+        // Wait for playback to finish, then tear down
+        previewTask = Task {
+            let durationNs = UInt64(Double(samples.count) / 24000.0 * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: durationNs + 200_000_000)
+            await MainActor.run { self.stopPreview() }
+        }
+    }
+
+    func stopPreview() {
+        previewTask?.cancel()
+        previewTask = nil
+        previewPlayer?.stop()
+        previewEngine?.stop()
+        previewPlayer = nil
+        previewEngine = nil
     }
 
     // MARK: - Audio Engine
@@ -471,6 +611,108 @@ final class TTSService {
         case .kokoro:
             try? await kokoroManager?.setDefaultVoice(voice)
         }
+    }
+
+    // MARK: - Sleep Timer
+
+    func setSleepTimer(_ mode: SleepTimerMode) {
+        sleepTimerTask?.cancel()
+        sleepTimerMode = mode
+
+        switch mode {
+        case .off:
+            sleepTimerRemainingSeconds = 0
+        case .timed(let minutes):
+            sleepTimerRemainingSeconds = minutes * 60
+            sleepTimerTask = Task {
+                while sleepTimerRemainingSeconds > 0 && !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    guard !Task.isCancelled else { return }
+                    await MainActor.run { self.sleepTimerRemainingSeconds -= 1 }
+                }
+                guard !Task.isCancelled else { return }
+                await MainActor.run {
+                    self.stop()
+                    self.sleepTimerMode = .off
+                }
+            }
+        case .endOfSection:
+            sleepTimerRemainingSeconds = 0
+        }
+    }
+
+    func cancelSleepTimer() {
+        sleepTimerTask?.cancel()
+        sleepTimerTask = nil
+        sleepTimerMode = .off
+        sleepTimerRemainingSeconds = 0
+    }
+
+    // MARK: - Custom Lexicon
+
+    private static var lexiconFileURL: URL? {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("custom_lexicon.txt")
+    }
+
+    func loadCustomLexicon() {
+        guard let url = Self.lexiconFileURL,
+              FileManager.default.fileExists(atPath: url.path) else {
+            customLexicon = nil
+            lexiconEntryCount = 0
+            kokoroManager?.setCustomLexicon(nil)
+            return
+        }
+
+        do {
+            let lexicon = try TtsCustomLexicon.load(from: url)
+            customLexicon = lexicon
+            lexiconEntryCount = lexicon.count
+            kokoroManager?.setCustomLexicon(lexicon)
+            ttsLogger.notice("Loaded custom lexicon with \(lexicon.count) entries")
+        } catch {
+            ttsLogger.error("Failed to load custom lexicon: \(error.localizedDescription)")
+            customLexicon = nil
+            lexiconEntryCount = 0
+        }
+    }
+
+    func saveAndApplyLexicon(_ content: String) throws {
+        guard let url = Self.lexiconFileURL else { return }
+
+        if content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            try? FileManager.default.removeItem(at: url)
+            customLexicon = nil
+            lexiconEntryCount = 0
+            kokoroManager?.setCustomLexicon(nil)
+            return
+        }
+
+        try content.write(to: url, atomically: true, encoding: .utf8)
+        let lexicon = try TtsCustomLexicon.parse(content)
+        customLexicon = lexicon
+        lexiconEntryCount = lexicon.count
+        kokoroManager?.setCustomLexicon(lexicon)
+        ttsLogger.notice("Applied custom lexicon with \(lexicon.count) entries")
+    }
+
+    func loadLexiconFileContent() -> String {
+        guard let url = Self.lexiconFileURL,
+              let content = try? String(contentsOf: url, encoding: .utf8) else {
+            return ""
+        }
+        return content
+    }
+
+    /// Converts a "sounds like" word to IPA phonemes via the G2P model.
+    /// Requires Kokoro engine to be initialized.
+    func phonemize(word: String) async throws -> String? {
+        if kokoroManager == nil {
+            await initializeKokoro()
+        }
+        guard let mgr = kokoroManager else { return nil }
+        guard let tokens = try await mgr.phonemize(word: word) else { return nil }
+        return tokens.joined()
     }
 
     // MARK: - Lifecycle
