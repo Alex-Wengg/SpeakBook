@@ -30,6 +30,7 @@ final class TTSService {
 
     private(set) var state: State = .idle
     private(set) var loadingMessage: String = ""
+    private(set) var statusMessage: String = ""
     private(set) var currentVoice: String = "alba"
     private(set) var currentEngine: TTSEngine = .pocketTTS
     private(set) var progress: Double = 0.0
@@ -55,7 +56,9 @@ final class TTSService {
     private var synthesisTask: Task<Void, Never>?
     private var idleUnloadTask: Task<Void, Never>?
     private var sleepTimerTask: Task<Void, Never>?
+    private var statusMessageTask: Task<Void, Never>?
     private var isStopped = false
+    private var currentFullText: String = ""
     private var totalSamples = 0
     private var playedSamples = 0
     private var lastBufferFinished = false
@@ -70,10 +73,10 @@ final class TTSService {
     var availableVoices: [String] {
         switch currentEngine {
         case .pocketTTS:
-            return ["alba", "heart", "bella"]
+            return ["alba", "marius", "javert", "jean", "fantine", "cosette", "eponine", "azelma"]
         case .kokoro:
-            // American English voices only (tested/supported)
-            return TtsConstants.availableVoices.filter { $0.hasPrefix("af_") || $0.hasPrefix("am_") }
+            // American + British English voices
+            return TtsConstants.availableVoices.filter { $0.hasPrefix("af_") || $0.hasPrefix("am_") || $0.hasPrefix("bf_") || $0.hasPrefix("bm_") }
         }
     }
 
@@ -200,6 +203,7 @@ final class TTSService {
 
         stop()
         cancelIdleUnloadTimer()
+        currentFullText = text
         isStopped = false
         lastBufferFinished = false
         playedSamples = 0
@@ -209,115 +213,241 @@ final class TTSService {
 
         let chunks = splitIntoChunks(text)
         sentences = chunks
-        let totalChunks = chunks.count
-        let effectiveStart = min(max(startFromChunk, 0), totalChunks - 1)
 
         setupAudioEngine()
 
-        guard let engine = audioEngine, let playerNode = playerNode else {
+        guard audioEngine != nil, playerNode != nil else {
             state = .error("Failed to setup audio engine")
             return
         }
+
+        synthesisTask = Task {
+            switch currentEngine {
+            case .pocketTTS:
+                await speakStreaming(text: text, chunks: chunks, startFromChunk: startFromChunk)
+            case .kokoro:
+                await speakBatch(chunks: chunks, startFromChunk: startFromChunk)
+            }
+        }
+    }
+
+    // MARK: - Batch Synthesis (Kokoro)
+
+    private func speakBatch(chunks: [String], startFromChunk: Int) async {
+        let totalChunks = chunks.count
+        let effectiveStart = min(max(startFromChunk, 0), totalChunks - 1)
+
+        guard let engine = audioEngine, let playerNode = playerNode else { return }
 
         state = .generating
         loadingMessage = "Generating speech..."
 
         let startTime = Date()
-        synthesisTask = Task {
-            do {
-                var hasStartedPlayback = false
-                var cumulativeSamples = 0
+        do {
+            var hasStartedPlayback = false
+            var cumulativeSamples = 0
 
-                for (index, chunk) in chunks.enumerated() {
-                    guard !isStopped else { break }
-                    if index < effectiveStart { continue }
+            for (index, chunk) in chunks.enumerated() {
+                guard !isStopped else { break }
+                if index < effectiveStart { continue }
 
+                await MainActor.run {
+                    self.currentSentenceIndex = index
+                    self.currentSentence = chunk
+                    self.onSentenceChanged?(index)
+                }
+
+                ttsLogger.notice("[\(self.currentEngine.rawValue)] Synthesizing chunk \(index + 1)/\(totalChunks)")
+                let chunkStart = Date()
+
+                let samples: [Float]
+                switch currentEngine {
+                case .pocketTTS:
+                    samples = try await synthesizePocketTTS(chunk)
+                case .kokoro:
+                    samples = try await synthesizeKokoro(chunk)
+                }
+
+                guard !isStopped else { break }
+
+                let processedSamples = skipSilence ? trimTrailingSilence(from: samples) : samples
+
+                let chunkTime = Date().timeIntervalSince(chunkStart)
+                let chunkDuration = Double(processedSamples.count) / 24000.0
+                ttsLogger.notice("Chunk \(index + 1) done: \(String(format: "%.1f", chunkDuration))s audio in \(String(format: "%.1f", chunkTime))s (\(String(format: "%.1f", chunkDuration / chunkTime))x RTFx)")
+
+                cumulativeSamples += processedSamples.count
+                totalSamples = cumulativeSamples
+
+                var samplesWithPause = processedSamples
+                if index < totalChunks - 1 {
+                    let pause = pauseDuration(after: chunk)
+                    if pause > 0 {
+                        samplesWithPause += [Float](repeating: 0, count: Int(24000.0 * pause))
+                    }
+                }
+
+                cumulativeSamples += samplesWithPause.count - processedSamples.count
+                let buffer = createPCMBuffer(from: samplesWithPause)
+                let chunkIndex = index
+                let isLastChunk = index == totalChunks - 1
+                playerNode.scheduleBuffer(buffer) { [weak self] in
+                    Task { @MainActor in
+                        guard let self = self, !self.isStopped else { return }
+                        self.progress = Double(chunkIndex + 1) / Double(totalChunks)
+                        if isLastChunk {
+                            self.lastBufferFinished = true
+                        }
+                    }
+                }
+
+                if !hasStartedPlayback {
+                    let latency = Date().timeIntervalSince(startTime)
+                    ttsLogger.notice("First chunk ready in \(String(format: "%.0f", latency * 1000))ms, starting playback")
                     await MainActor.run {
-                        self.currentSentenceIndex = index
-                        self.currentSentence = chunk
-                        self.onSentenceChanged?(index)
+                        self.loadingMessage = ""
+                        self.state = .playing
                     }
+                    try engine.start()
+                    playerNode.play()
+                    hasStartedPlayback = true
+                }
+            }
 
-                    ttsLogger.notice("[\(self.currentEngine.rawValue)] Synthesizing chunk \(index + 1)/\(totalChunks)")
-                    let chunkStart = Date()
+            let totalTime = Date().timeIntervalSince(startTime)
+            let totalAudio = Double(cumulativeSamples) / 24000.0
+            ttsLogger.notice("All \(totalChunks) chunks done: \(String(format: "%.1f", totalAudio))s audio in \(String(format: "%.1f", totalTime))s")
 
-                    let samples: [Float]
-                    switch currentEngine {
-                    case .pocketTTS:
-                        samples = try await synthesizePocketTTS(chunk)
-                    case .kokoro:
-                        samples = try await synthesizeKokoro(chunk)
-                    }
+            await waitForPlaybackCompletion()
 
-                    guard !isStopped else { break }
+            await MainActor.run {
+                if !self.isStopped {
+                    self.progress = 1.0
+                    self.state = .idle
+                    self.onPlaybackFinished?()
+                }
+            }
+        } catch {
+            await MainActor.run {
+                self.state = .error("Synthesis failed: \(error.localizedDescription)")
+            }
+        }
+    }
 
-                    // Trim trailing near-silence when skip silence is enabled
-                    let processedSamples = skipSilence ? trimTrailingSilence(from: samples) : samples
+    // MARK: - Streaming Synthesis (PocketTTS)
 
-                    let chunkTime = Date().timeIntervalSince(chunkStart)
-                    let chunkDuration = Double(processedSamples.count) / 24000.0
-                    ttsLogger.notice("Chunk \(index + 1) done: \(String(format: "%.1f", chunkDuration))s audio in \(String(format: "%.1f", chunkTime))s (\(String(format: "%.1f", chunkDuration / chunkTime))x RTFx)")
+    private func speakStreaming(text: String, chunks: [String], startFromChunk: Int) async {
+        guard let mgr = pocketManager else {
+            ttsLogger.error("speakStreaming: pocketManager is nil")
+            return
+        }
 
-                    cumulativeSamples += processedSamples.count
-                    totalSamples = cumulativeSamples
+        // Build effective text from startFromChunk onward
+        let effectiveText: String
+        if startFromChunk > 0 && startFromChunk < chunks.count {
+            effectiveText = chunks[startFromChunk...].joined(separator: " ")
+        } else {
+            effectiveText = text
+        }
 
-                    // Append silence to samples based on trailing punctuation
-                    var samplesWithPause = processedSamples
-                    if index < totalChunks - 1 {
-                        let pause = pauseDuration(after: chunk)
-                        if pause > 0 {
-                            samplesWithPause += [Float](repeating: 0, count: Int(24000.0 * pause))
-                        }
-                    }
+        let voiceName = currentVoice
+        NSLog("[TTS-STREAM] text length=\(effectiveText.count), voice=\(voiceName)")
 
-                    cumulativeSamples += samplesWithPause.count - processedSamples.count
-                    let buffer = createPCMBuffer(from: samplesWithPause)
-                    let chunkIndex = index
-                    let isLastChunk = index == totalChunks - 1
-                    playerNode.scheduleBuffer(buffer) { [weak self] in
-                        Task { @MainActor in
-                            guard let self = self, !self.isStopped else { return }
-                            self.progress = Double(chunkIndex + 1) / Double(totalChunks)
-                            if isLastChunk {
-                                self.lastBufferFinished = true
-                            }
-                        }
-                    }
+        state = .generating
+        loadingMessage = "Generating speech..."
 
-                    if !hasStartedPlayback {
-                        let latency = Date().timeIntervalSince(startTime)
-                        ttsLogger.notice("First chunk ready in \(String(format: "%.0f", latency * 1000))ms, starting playback")
+        do {
+            // Ensure voice is valid for PocketTTS, fall back to default if not
+            let voice = availableVoices.contains(currentVoice) ? currentVoice : "alba"
+            NSLog("[TTS-STREAM] calling synthesizeStreaming with voice=\(voice)...")
+            let streamStart = Date()
+            let stream = try await mgr.synthesizeStreaming(
+                text: effectiveText,
+                voice: voice
+            )
+            let streamSetup = Date().timeIntervalSince(streamStart)
+            NSLog("[TTS-STREAM] stream created in \(String(format: "%.0f", streamSetup * 1000))ms")
+
+            var hasStartedPlayback = false
+            var bufferedFrames = 0
+            let preBufferCount = 5  // 400ms pre-buffer before starting playback
+            var lastChunkIndex = -1
+            var streamFinished = false
+
+            for try await frame in stream {
+                if bufferedFrames == 0 {
+                    NSLog("[TTS-STREAM] first frame received!")
+                }
+                guard !isStopped else { break }
+
+                // Track sentence changes via chunkIndex from the stream
+                if frame.chunkIndex != lastChunkIndex {
+                    lastChunkIndex = frame.chunkIndex
+                    let sentenceIdx = startFromChunk + frame.chunkIndex
+                    if sentenceIdx < chunks.count {
                         await MainActor.run {
-                            self.loadingMessage = ""
-                            self.state = .playing
+                            self.currentSentenceIndex = sentenceIdx
+                            self.currentSentence = chunks[sentenceIdx]
+                            self.onSentenceChanged?(sentenceIdx)
                         }
-                        try engine.start()
-                        playerNode.play()
-                        hasStartedPlayback = true
                     }
                 }
 
-                let totalTime = Date().timeIntervalSince(startTime)
-                let totalAudio = Double(cumulativeSamples) / 24000.0
-                ttsLogger.notice("All \(totalChunks) chunks done: \(String(format: "%.1f", totalAudio))s audio in \(String(format: "%.1f", totalTime))s")
+                let processedSamples = skipSilence ? trimTrailingSilence(from: frame.samples) : frame.samples
+                let buffer = createPCMBuffer(from: processedSamples)
 
-                await waitForPlaybackCompletion()
-
-                await MainActor.run {
-                    if !self.isStopped {
-                        self.progress = 1.0
-                        self.state = .idle
-                        print("[TTS] Playback finished naturally, calling onPlaybackFinished: \(self.onPlaybackFinished != nil)")
-                        self.onPlaybackFinished?()
-                    } else {
-                        print("[TTS] Playback ended but isStopped=true, skipping callback")
+                let capturedChunkIndex = frame.chunkIndex
+                let capturedChunkCount = frame.chunkCount
+                playerNode?.scheduleBuffer(buffer) { [weak self] in
+                    Task { @MainActor in
+                        guard let self = self, !self.isStopped else { return }
+                        self.progress = Double(capturedChunkIndex + 1) / Double(capturedChunkCount)
                     }
                 }
-            } catch {
-                print("[TTS synthesis error] \(error)")
-                await MainActor.run {
-                    self.state = .error("Synthesis failed: \(error.localizedDescription)")
+
+                bufferedFrames += 1
+
+                // Start playback after pre-buffer fills
+                if !hasStartedPlayback && bufferedFrames >= preBufferCount {
+                    await MainActor.run {
+                        self.loadingMessage = ""
+                        self.state = .playing
+                    }
+                    try audioEngine?.start()
+                    playerNode?.play()
+                    hasStartedPlayback = true
                 }
+            }
+
+            streamFinished = true
+
+            // Very short text may not hit preBufferCount — start playback now
+            if !hasStartedPlayback && !isStopped {
+                await MainActor.run {
+                    self.loadingMessage = ""
+                    self.state = .playing
+                }
+                try audioEngine?.start()
+                playerNode?.play()
+            }
+
+            // Wait for all scheduled buffers to finish playing
+            if streamFinished && !isStopped {
+                await waitForStreamingPlaybackCompletion()
+            }
+
+            await MainActor.run {
+                if !self.isStopped {
+                    self.progress = 1.0
+                    self.state = .idle
+                    self.onPlaybackFinished?()
+                }
+            }
+        } catch {
+            NSLog("[TTS-STREAM] ERROR: \(error)")
+            await MainActor.run {
+                self.loadingMessage = ""
+                self.state = .error("Synthesis failed: \(error.localizedDescription)")
             }
         }
     }
@@ -566,6 +696,29 @@ final class TTSService {
         }
     }
 
+    private func waitForStreamingPlaybackCompletion() async {
+        // AVAudioPlayerNode.isPlaying stays true even after all buffers drain,
+        // so we schedule a tiny silent sentinel buffer whose completion handler
+        // signals that all real audio has finished playing.
+        guard let player = playerNode else { return }
+
+        let format = AVAudioFormat(
+            commonFormat: .pcmFormatFloat32, sampleRate: 24000, channels: 1, interleaved: false
+        )!
+        let sentinel = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1)!
+        sentinel.frameLength = 1
+        sentinel.floatChannelData![0][0] = 0
+
+        var done = false
+        player.scheduleBuffer(sentinel) {
+            done = true
+        }
+
+        while !done && !isStopped {
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
+    }
+
     // MARK: - Playback Controls
 
     func pause() {
@@ -611,6 +764,28 @@ final class TTSService {
         case .kokoro:
             try? await kokoroManager?.setDefaultVoice(voice)
         }
+
+        // Notify user the new voice will apply on the next sentence
+        if state == .playing || state == .paused || state == .generating {
+            showStatusMessage("Voice changed — applies on next sentence")
+        }
+    }
+
+    // MARK: - Sentence Navigation
+
+    func skipToNextSentence() async {
+        let savedSentences = sentences
+        let text = currentFullText
+        let nextIndex = currentSentenceIndex + 1
+        guard !text.isEmpty, nextIndex < savedSentences.count else { return }
+        await speak(text: text, startFromChunk: nextIndex)
+    }
+
+    func skipToPreviousSentence() async {
+        let text = currentFullText
+        let prevIndex = max(currentSentenceIndex - 1, 0)
+        guard !text.isEmpty else { return }
+        await speak(text: text, startFromChunk: prevIndex)
     }
 
     // MARK: - Sleep Timer
@@ -646,6 +821,18 @@ final class TTSService {
         sleepTimerTask = nil
         sleepTimerMode = .off
         sleepTimerRemainingSeconds = 0
+    }
+
+    // MARK: - Status Messages
+
+    private func showStatusMessage(_ message: String, duration: TimeInterval = 3) {
+        statusMessageTask?.cancel()
+        statusMessage = message
+        statusMessageTask = Task {
+            try? await Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+            await MainActor.run { self.statusMessage = "" }
+        }
     }
 
     // MARK: - Custom Lexicon

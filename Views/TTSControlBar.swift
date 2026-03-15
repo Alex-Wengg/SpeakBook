@@ -24,6 +24,12 @@ struct TTSControlBar: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+            } else if !ttsService.statusMessage.isEmpty {
+                Text(ttsService.statusMessage)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: ttsService.statusMessage)
             } else if case .error(let message) = ttsService.state {
                 Text(message)
                     .font(.caption)
@@ -105,7 +111,7 @@ struct TTSControlBar: View {
                 Button {
                     ttsService.skipSilence.toggle()
                 } label: {
-                    Image(systemName: ttsService.skipSilence ? "forward.fill" : "forward")
+                    Image(systemName: ttsService.skipSilence ? "hare.fill" : "hare")
                         .font(.title3)
                         .foregroundStyle(ttsService.skipSilence ? .blue : .primary)
                 }
@@ -132,6 +138,14 @@ struct TTSControlBar: View {
 
                 Spacer()
 
+                // Previous sentence
+                Button {
+                    Task { await ttsService.skipToPreviousSentence() }
+                } label: {
+                    Image(systemName: "backward.fill")
+                        .font(.title3)
+                }
+
                 // Play/Pause button
                 Button {
                     Task {
@@ -155,6 +169,14 @@ struct TTSControlBar: View {
                     .frame(width: 44, height: 44)
                 }
                 .disabled(ttsService.state == .loadingModels || ttsService.state == .generating)
+
+                // Next sentence
+                Button {
+                    Task { await ttsService.skipToNextSentence() }
+                } label: {
+                    Image(systemName: "forward.fill")
+                        .font(.title3)
+                }
 
                 // Stop button
                 Button {
