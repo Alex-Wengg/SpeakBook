@@ -89,7 +89,7 @@ struct EPubReaderView: View {
                 if let metadata = metadata, metadata.spine.count > 1 {
                     let chunkCount = ttsService.sentences.count
                     let withinChapter = chunkCount > 0 ? Double(index) / Double(chunkCount) : 0
-                    book.currentPosition = (Double(currentChapterIndex) + withinChapter) / Double(metadata.spine.count - 1)
+                    book.currentPosition = (Double(currentChapterIndex) + withinChapter) / Double(max(1, metadata.spine.count - 1))
                 }
             }
             ttsService.onPlaybackFinished = {
@@ -172,16 +172,16 @@ struct EPubReaderView: View {
             return
         }
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            if let result = EPubParser.extractAndPrepare(epubURL: fileURL) {
-                DispatchQueue.main.async {
+        let currentChapter = book.currentChapter
+        Task.detached {
+            let result = EPubParser.extractAndPrepare(epubURL: fileURL)
+            await MainActor.run {
+                if let result = result {
                     self.extractedPath = result.extractedPath
                     self.metadata = result.metadata
-                    self.currentChapterIndex = findChapterIndex(for: book.currentChapter, in: result.metadata)
+                    self.currentChapterIndex = self.findChapterIndex(for: currentChapter, in: result.metadata)
                     self.isLoading = false
-                }
-            } else {
-                DispatchQueue.main.async {
+                } else {
                     self.errorMessage = "Failed to parse ePub file"
                     self.isLoading = false
                 }

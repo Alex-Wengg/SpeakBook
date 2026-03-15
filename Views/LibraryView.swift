@@ -83,14 +83,15 @@ struct LibraryView: View {
                 )
                 modelContext.insert(book)
 
-                // Load cover in background
-                Task.detached {
-                    if fileType == .pdf {
-                        let (author, coverImage) = PDFMetadataExtractor.extractMetadata(from: fileURL)
-                        await MainActor.run {
-                            book.author = author
-                            book.coverImage = coverImage
-                        }
+                // Load cover in background — avoid passing SwiftData model across isolation
+                if fileType == .pdf {
+                    let url = fileURL
+                    Task {
+                        let (author, coverImage) = await Task.detached {
+                            PDFMetadataExtractor.extractMetadata(from: url)
+                        }.value
+                        book.author = author
+                        book.coverImage = coverImage
                     }
                 }
             }
@@ -163,7 +164,7 @@ struct LibraryView: View {
         }
 
         do {
-            let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
             let destinationFilename = "\(UUID().uuidString).\(url.pathExtension)"
             let destinationURL = documentsURL.appendingPathComponent(destinationFilename)
 

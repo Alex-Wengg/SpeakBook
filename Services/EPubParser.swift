@@ -62,7 +62,7 @@ enum EPubParser {
     private static func getExtractedPath(for epubURL: URL) -> URL? {
         let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         let extractedDir = cacheDir.appendingPathComponent("epub_extracted")
-        let bookDir = extractedDir.appendingPathComponent(epubURL.deletingPathExtension().lastPathComponent)
+        let bookDir = extractedDir.appendingPathComponent(epubURL.lastPathComponent)
 
         if FileManager.default.fileExists(atPath: bookDir.path) {
             return bookDir
@@ -74,7 +74,7 @@ enum EPubParser {
     private static func extractEPub(at epubURL: URL) -> URL? {
         let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         let extractedDir = cacheDir.appendingPathComponent("epub_extracted")
-        let bookDir = extractedDir.appendingPathComponent(epubURL.deletingPathExtension().lastPathComponent)
+        let bookDir = extractedDir.appendingPathComponent(epubURL.lastPathComponent)
 
         if FileManager.default.fileExists(atPath: bookDir.path) {
             return bookDir

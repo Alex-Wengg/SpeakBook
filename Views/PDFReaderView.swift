@@ -8,6 +8,7 @@ struct PDFReaderView: View {
     @State private var currentPage: Int = 0
     @State private var totalPages: Int = 0
     @State private var showTTSControls = false
+    @State private var isAutoAdvancing = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -84,7 +85,7 @@ struct PDFReaderView: View {
                 if totalPages > 1 {
                     let chunkCount = ttsService.sentences.count
                     let withinPage = chunkCount > 0 ? Double(index) / Double(chunkCount) : 0
-                    book.currentPosition = (Double(currentPage) + withinPage) / Double(totalPages - 1)
+                    book.currentPosition = (Double(currentPage) + withinPage) / Double(max(1, totalPages - 1))
                 }
             }
             ttsService.onPlaybackFinished = {
@@ -98,6 +99,7 @@ struct PDFReaderView: View {
                     print("[TTS] Guard failed, not advancing")
                     return
                 }
+                isAutoAdvancing = true
                 currentPage += 1
                 book.ttsSentenceIndex = nil
                 print("[TTS] Advanced to page \(currentPage)")
@@ -119,11 +121,12 @@ struct PDFReaderView: View {
         }
         .onChange(of: currentPage) { _, newValue in
             updateProgress(page: newValue)
-            // Stop TTS when user manually changes page
-            if ttsService.isPlaying {
+            // Stop TTS when user manually changes page (not auto-advance)
+            if ttsService.isPlaying && !isAutoAdvancing {
                 book.ttsSentenceIndex = nil
                 ttsService.stop()
             }
+            isAutoAdvancing = false
         }
     }
 
@@ -223,7 +226,7 @@ struct PDFReaderView: View {
     private func updateProgress(page: Int) {
         guard totalPages > 0 else { return }
         book.currentPage = page
-        book.currentPosition = Double(page) / Double(totalPages - 1)
+        book.currentPosition = Double(page) / Double(max(1, totalPages - 1))
     }
 
     private func saveProgress() {
@@ -370,9 +373,6 @@ enum PDFTextCleaner {
 
             // Skip standalone numbers (page numbers, footnote numbers)
             if trimmed.allSatisfy({ $0.isNumber || $0 == "." || $0 == "-" || $0 == " " }) { continue }
-
-            // Skip very short lines that look like headers/footers (e.g. "Chapter 3", "| 42")
-            if trimmed.count < 6 { continue }
 
             cleaned.append(trimmed)
         }

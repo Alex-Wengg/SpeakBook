@@ -73,7 +73,12 @@ final class TTSService {
     var availableVoices: [String] {
         switch currentEngine {
         case .pocketTTS:
-            return ["alba", "marius", "javert", "jean", "fantine", "cosette", "eponine", "azelma"]
+            return [
+                "alba", "anna", "azelma", "bill_boerst", "caro_davy",
+                "charles", "cosette", "eponine", "eve", "fantine",
+                "george", "jane", "javert", "jean", "marius",
+                "mary", "michael", "paul", "peter_yearsley", "stuart_bell", "vera"
+            ]
         case .kokoro:
             // American + British English voices
             return TtsConstants.availableVoices.filter { $0.hasPrefix("af_") || $0.hasPrefix("am_") || $0.hasPrefix("bf_") || $0.hasPrefix("bm_") }
@@ -604,9 +609,12 @@ final class TTSService {
         // Set up a dedicated preview audio engine
         let engine = AVAudioEngine()
         let player = AVAudioPlayerNode()
-        let format = AVAudioFormat(
+        guard let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32, sampleRate: 24000, channels: 1, interleaved: false
-        )!
+        ) else {
+            ttsLogger.error("Failed to create preview audio format")
+            return
+        }
 
         engine.attach(player)
         engine.connect(player, to: engine.mainMixerNode, format: format)
@@ -655,12 +663,17 @@ final class TTSService {
 
         engine.attach(player)
 
-        let format = AVAudioFormat(
+        guard let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
             sampleRate: 24000,
             channels: 1,
             interleaved: false
-        )!
+        ) else {
+            ttsLogger.error("Failed to create audio format")
+            audioEngine = nil
+            playerNode = nil
+            return
+        }
 
         engine.connect(player, to: engine.mainMixerNode, format: format)
 
@@ -672,19 +685,26 @@ final class TTSService {
     }
 
     private func createPCMBuffer(from samples: [Float]) -> AVAudioPCMBuffer {
-        let format = AVAudioFormat(
+        guard let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
             sampleRate: 24000,
             channels: 1,
             interleaved: false
-        )!
+        ),
+        let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(samples.count)),
+        let channelData = buffer.floatChannelData else {
+            ttsLogger.error("Failed to create PCM buffer")
+            // Return a minimal valid buffer as fallback
+            let fallbackFormat = AVAudioFormat(standardFormatWithSampleRate: 24000, channels: 1)!
+            let fallbackBuffer = AVAudioPCMBuffer(pcmFormat: fallbackFormat, frameCapacity: 1)!
+            fallbackBuffer.frameLength = 0
+            return fallbackBuffer
+        }
 
-        let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(samples.count))!
         buffer.frameLength = AVAudioFrameCount(samples.count)
-
-        let channelData = buffer.floatChannelData![0]
+        let ptr = channelData[0]
         for (i, sample) in samples.enumerated() {
-            channelData[i] = sample
+            ptr[i] = sample
         }
 
         return buffer
@@ -700,14 +720,14 @@ final class TTSService {
         // AVAudioPlayerNode.isPlaying stays true even after all buffers drain,
         // so we schedule a tiny silent sentinel buffer whose completion handler
         // signals that all real audio has finished playing.
-        guard let player = playerNode else { return }
-
-        let format = AVAudioFormat(
-            commonFormat: .pcmFormatFloat32, sampleRate: 24000, channels: 1, interleaved: false
-        )!
-        let sentinel = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1)!
+        guard let player = playerNode,
+              let format = AVAudioFormat(
+                  commonFormat: .pcmFormatFloat32, sampleRate: 24000, channels: 1, interleaved: false
+              ),
+              let sentinel = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1),
+              let channelData = sentinel.floatChannelData else { return }
         sentinel.frameLength = 1
-        sentinel.floatChannelData![0][0] = 0
+        channelData[0][0] = 0
 
         var done = false
         player.scheduleBuffer(sentinel) {
@@ -930,11 +950,13 @@ final class TTSService {
 
     func cleanup() {
         stop()
-        Task {
-            await pocketManager?.cleanup()
-        }
-        kokoroManager?.cleanup()
+        let pocket = pocketManager
+        let kokoro = kokoroManager
         pocketManager = nil
         kokoroManager = nil
+        kokoro?.cleanup()
+        Task {
+            await pocket?.cleanup()
+        }
     }
 }

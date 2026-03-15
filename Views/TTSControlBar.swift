@@ -289,23 +289,23 @@ struct VoicePickerView: View {
     }
 
     private func formatVoiceName(_ voice: String) -> String {
-        // Convert "af_heart" to "Heart (Female)"
         let parts = voice.split(separator: "_")
-        guard parts.count >= 2 else { return voice }
-
-        let prefix = String(parts[0])
-        let name = String(parts[1]).capitalized
-
-        let gender: String
-        if prefix.hasPrefix("a") {
-            gender = prefix.hasSuffix("f") ? "American Female" : "American Male"
-        } else if prefix.hasPrefix("b") {
-            gender = prefix.hasSuffix("f") ? "British Female" : "British Male"
-        } else {
-            gender = ""
+        guard parts.count >= 2 else {
+            return voice.capitalized
         }
 
-        return gender.isEmpty ? name : "\(name) (\(gender))"
+        let prefix = String(parts[0])
+
+        // Kokoro voices: "af_heart" → "Heart (American Female)"
+        let kokoroPrefixes = ["af": "American Female", "am": "American Male",
+                              "bf": "British Female", "bm": "British Male"]
+        if let gender = kokoroPrefixes[prefix] {
+            let name = parts.dropFirst().joined(separator: " ").capitalized
+            return "\(name) (\(gender))"
+        }
+
+        // PocketTTS voices: "bill_boerst" → "Bill Boerst"
+        return parts.joined(separator: " ").capitalized
     }
 }
 
@@ -437,42 +437,17 @@ struct TextStartPickerView: View {
             return
         }
 
-        // Split into sentences using natural language processing-style splitting
-        var result: [String] = []
-        let delimiters = CharacterSet(charactersIn: ".!?")
-
-        // Split by sentence-ending punctuation
-        let parts = text.components(separatedBy: delimiters)
-        for part in parts {
-            let trimmed = part.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.isEmpty && trimmed.count > 10 {
-                result.append(trimmed)
-            }
-        }
-
-        // If no good sentence splits, try splitting by newlines
-        if result.isEmpty {
-            result = text.components(separatedBy: .newlines)
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter { !$0.isEmpty && $0.count > 10 }
-        }
-
-        // If still nothing, just use the whole text
-        if result.isEmpty && !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            result = [text.trimmingCharacters(in: .whitespacesAndNewlines)]
-        }
-
-        sentences = result
+        // Use TTSService's own chunking so indices match
+        sentences = ttsService.splitIntoChunks(text)
     }
 
     private func startFromSentence(at index: Int) {
-        // Build text from selected sentence onwards
-        let remainingText = sentences[index...].joined(separator: ". ")
+        guard let text = getText() else { return }
 
         isPresented = false
 
         Task {
-            await ttsService.speak(text: remainingText)
+            await ttsService.speak(text: text, startFromChunk: index)
         }
     }
 }
