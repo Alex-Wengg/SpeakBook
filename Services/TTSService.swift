@@ -911,15 +911,10 @@ final class TTSService {
         return content
     }
 
-    /// Converts a "sounds like" word to IPA phonemes via the G2P model.
-    /// Requires Kokoro engine to be initialized.
+    /// Converts a "sounds like" word to IPA phonemes via the multilingual G2P model.
     func phonemize(word: String) async throws -> String? {
-        if kokoroManager == nil {
-            await initializeKokoro()
-        }
-        guard let mgr = kokoroManager else { return nil }
-        guard let tokens = try await mgr.phonemize(word: word) else { return nil }
-        return tokens.joined()
+        let tokens = try await MultilingualG2PModel.shared.phonemize(word: word, language: .americanEnglish)
+        return tokens?.joined()
     }
 
     // MARK: - Lifecycle
